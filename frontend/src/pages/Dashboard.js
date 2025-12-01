@@ -79,7 +79,7 @@ function Dashboard({ user, onLogout }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white border-b shadow-sm">
+      <div className="bg-white dark:bg-gray-800 border-b shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -88,7 +88,7 @@ function Dashboard({ user, onLogout }) {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">Painel Administrativo</h1>
-                <p className="text-sm text-gray-600">Bem-vindo, {user?.name}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Bem-vindo, {user?.name}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
