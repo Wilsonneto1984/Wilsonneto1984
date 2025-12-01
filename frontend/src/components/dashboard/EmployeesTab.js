@@ -314,7 +314,25 @@ function EmployeesTab({ employees, onRefresh, user }) {
               {/* Botão de Exportação */}
               <Button
                 variant="outline"
-                onClick={() => window.open(`${API}/export/employees/excel`, '_blank')}
+                onClick={() => {
+                  let url = `${API}/export/employees/excel`;
+                  // Adicionar filtro de turno baseado na guia ativa
+                  if (activeTab === 'dia') {
+                    url += '?turno=DIA';
+                  } else if (activeTab === 'noite') {
+                    url += '?turno=NOITE';
+                  } else if (activeTab === 'inactive') {
+                    url += '?active=false';
+                  }
+                  // activeTab === 'all' não precisa de filtro
+                  window.open(url, '_blank');
+                }}
+                title={
+                  activeTab === 'dia' ? 'Exportar Turno DIA' :
+                  activeTab === 'noite' ? 'Exportar Turno NOITE' :
+                  activeTab === 'inactive' ? 'Exportar Desmobilizados' :
+                  'Exportar Todos'
+                }
               >
                 <Upload className="w-4 h-4 mr-2 rotate-180" />
                 Exportar Excel
