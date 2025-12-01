@@ -16,6 +16,7 @@ function Dashboard({ user, onLogout }) {
   const [shifts, setShifts] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [companyCode, setCompanyCode] = useState(null);
 
   const isSuperAdmin = user?.role === 'super_admin';
 
@@ -33,13 +34,15 @@ function Dashboard({ user, onLogout }) {
         ]);
         setCompanies(companiesRes.data);
       } else {
-        // Company admin/viewer busca dados operacionais
-        const [employeesRes, shiftsRes] = await Promise.all([
+        // Company admin/viewer busca dados operacionais e company_code
+        const [employeesRes, shiftsRes, companyRes] = await Promise.all([
           axios.get(`${API}/employees`),
-          axios.get(`${API}/shifts`)
+          axios.get(`${API}/shifts`),
+          axios.get(`${API}/companies/${user.company_id}`)
         ]);
         setEmployees(employeesRes.data);
         setShifts(shiftsRes.data);
+        setCompanyCode(companyRes.data.company_code);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -83,8 +86,8 @@ function Dashboard({ user, onLogout }) {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              {!isSuperAdmin && (
-                <Button onClick={() => window.open('/', '_blank')} variant="outline" size="sm">
+              {!isSuperAdmin && companyCode && (
+                <Button onClick={() => window.open(`/public/${companyCode}`, '_blank')} variant="outline" size="sm">
                   Visualizar Pública
                 </Button>
               )}
