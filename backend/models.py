@@ -76,7 +76,7 @@ class EmployeeCreate(BaseModel):
     funcao: str
     turno: Literal["DIA", "NOITE"]
     grupo: str  # 1, 2, 3, etc
-    mo: Literal["M.O.D", "M.O.I"]  # Mão de obra direta/indireta
+    mo: Optional[str] = None  # M.O.D ou M.O.I ou vazio
     admissao: Optional[str] = None  # Data de admissão YYYY-MM-DD
     sindicato: Optional[str] = None
     primeiro_acesso: Optional[str] = None  # Data do primeiro acesso
@@ -86,7 +86,7 @@ class EmployeeUpdate(BaseModel):
     funcao: Optional[str] = None
     turno: Optional[Literal["DIA", "NOITE"]] = None
     grupo: Optional[str] = None
-    mo: Optional[Literal["M.O.D", "M.O.I"]] = None
+    mo: Optional[str] = None  # M.O.D ou M.O.I ou vazio
     admissao: Optional[str] = None
     sindicato: Optional[str] = None
     primeiro_acesso: Optional[str] = None
