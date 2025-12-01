@@ -57,8 +57,8 @@ function Login({ onLogin }) {
                   id="email"
                   type="email"
                   placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
                   required
                   data-testid="login-email-input"
                 />
