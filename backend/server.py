@@ -919,6 +919,7 @@ async def update_attendance(
 @api_router.get("/export/employees/excel")
 async def export_employees_excel(
     turno: Optional[str] = None,
+    active: Optional[bool] = True,
     current_user: dict = Depends(get_current_user)
 ):
     """Export employees to Excel"""
@@ -931,7 +932,11 @@ async def export_employees_excel(
         if not company_id:
             raise HTTPException(status_code=400, detail="Company ID required")
         
-        query = {"company_id": company_id, "active": True}
+        query = {"company_id": company_id}
+        
+        # Aplicar filtros
+        if active is not None:
+            query["active"] = active
         if turno:
             query["turno"] = turno
         
