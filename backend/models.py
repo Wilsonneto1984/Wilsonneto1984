@@ -12,6 +12,7 @@ import uuid
 
 class CompanyCreate(BaseModel):
     name: str
+    company_code: str  # Código único da empresa (ex: REVAP2024)
     subscription_type: Literal["monthly", "annual"]
     admin_email: EmailStr
     admin_password: str
@@ -19,6 +20,7 @@ class CompanyCreate(BaseModel):
 
 class CompanyUpdate(BaseModel):
     name: Optional[str] = None
+    company_code: Optional[str] = None
     active: Optional[bool] = None
     subscription_type: Optional[Literal["monthly", "annual"]] = None
     subscription_expires_at: Optional[str] = None  # ISO format
@@ -28,6 +30,7 @@ class Company(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
+    company_code: str  # Código único de acesso da empresa
     logo_url: Optional[str] = None
     active: bool = True
     subscription_type: Literal["monthly", "annual"]
