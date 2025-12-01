@@ -26,11 +26,15 @@ function PublicView() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [companyCode, setCompanyCode] = useState(localStorage.getItem('public_company_code') || '');
+  const [showCodeInput, setShowCodeInput] = useState(!localStorage.getItem('public_company_code'));
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData();
-  }, [selectedDate]);
+    if (companyCode) {
+      fetchData();
+    }
+  }, [selectedDate, companyCode]);
 
   const fetchData = async () => {
     setLoading(true);
