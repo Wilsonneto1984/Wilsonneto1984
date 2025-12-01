@@ -8,7 +8,7 @@ import json
 import os
 
 # Get backend URL from environment
-BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://code-repository-2.preview.emergentagent.com')
+BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://attendsmart-11.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 def make_request(method, endpoint, data=None, token=None):
