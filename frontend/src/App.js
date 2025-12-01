@@ -6,6 +6,8 @@ import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import PublicView from "@/pages/PublicView";
 import AccessSelection from "@/pages/AccessSelection";
+import Register from "@/pages/Register";
+import SubscriptionExpired from "@/pages/SubscriptionExpired";
 import { Toaster } from "@/components/ui/sonner";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -82,6 +84,16 @@ function App() {
             element={<PublicView />} 
           />
           
+          {/* Registro de Nova Empresa */}
+          <Route 
+            path="/register" 
+            element={
+              isAuthenticated ? 
+              <Navigate to="/dashboard" replace /> : 
+              <Register />
+            } 
+          />
+          
           {/* Página de Seleção de Acesso */}
           <Route 
             path="/" 
@@ -115,6 +127,12 @@ function App() {
               <Dashboard user={user} onLogout={handleLogout} /> : 
               <Navigate to="/" replace />
             } 
+          />
+          
+          {/* Assinatura Expirada */}
+          <Route 
+            path="/subscription-expired" 
+            element={<SubscriptionExpired company={user?.company} onPaymentSuccess={() => window.location.reload()} />} 
           />
           
           <Route path="*" element={<Navigate to="/" replace />} />
