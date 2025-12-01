@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Users, Calendar, Clock, LogOut, BarChart3, Building2, Settings } from "lucide-react";
 import { toast } from "sonner";
+import ThemeToggle from "@/components/ThemeToggle";
 import EmployeesTab from "@/components/dashboard/EmployeesTab";
 import AttendanceTab from "@/components/dashboard/AttendanceTab";
 import ShiftsTab from "@/components/dashboard/ShiftsTab";
@@ -76,7 +77,7 @@ function Dashboard({ user, onLogout }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="bg-white border-b shadow-sm">
         <div className="container mx-auto px-4 py-4">
@@ -86,7 +87,7 @@ function Dashboard({ user, onLogout }) {
                 <Users className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Painel Administrativo</h1>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Painel Administrativo</h1>
                 <p className="text-sm text-gray-600">Bem-vindo, {user?.name}</p>
               </div>
             </div>
