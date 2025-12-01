@@ -455,7 +455,8 @@ function EmployeesTab({ employees, onRefresh, user }) {
                   </form>
                 </DialogContent>
               </Dialog>
-            )}
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent>
