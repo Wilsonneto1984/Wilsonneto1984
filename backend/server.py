@@ -172,7 +172,9 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 
 # ============ COMPANY REGISTRATION (PUBLIC) ============
 
-class CompanyRegistration(BaseModel):
+from pydantic import BaseModel as PydanticBaseModel
+
+class CompanyRegistration(PydanticBaseModel):
     company_name: str
     company_code: str
     admin_name: str
