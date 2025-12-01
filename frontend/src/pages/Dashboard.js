@@ -99,8 +99,14 @@ function Dashboard({ user, onLogout }) {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="attendance" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+        <Tabs defaultValue={isSuperAdmin ? "companies" : "attendance"} className="space-y-6">
+          <TabsList className={`grid w-full ${isSuperAdmin ? 'grid-cols-2 lg:grid-cols-5' : 'grid-cols-2 lg:grid-cols-4'}`}>
+            {isSuperAdmin && (
+              <TabsTrigger value="companies" data-testid="tab-companies">
+                <Building2 className="w-4 h-4 mr-2" />
+                Empresas
+              </TabsTrigger>
+            )}
             <TabsTrigger value="attendance" data-testid="tab-attendance">
               <Calendar className="w-4 h-4 mr-2" />
               Presença
@@ -119,6 +125,12 @@ function Dashboard({ user, onLogout }) {
             </TabsTrigger>
           </TabsList>
 
+          {isSuperAdmin && (
+            <TabsContent value="companies">
+              <CompaniesTab companies={companies} onRefresh={fetchData} />
+            </TabsContent>
+          )}
+
           <TabsContent value="attendance">
             <AttendanceTab employees={employees} shifts={shifts} onRefresh={fetchData} />
           </TabsContent>
@@ -132,7 +144,7 @@ function Dashboard({ user, onLogout }) {
           </TabsContent>
 
           <TabsContent value="history">
-            <HistoryTab employees={employees} shifts={shifts} />
+            <HistoryTab employees={employees} />
           </TabsContent>
         </Tabs>
       </div>
