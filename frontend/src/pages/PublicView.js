@@ -313,9 +313,24 @@ function PublicView() {
             </div>
             <div className="flex items-center space-x-2">
               <Button 
-                onClick={() => window.open(`${API}/public/export/excel?company_code=${companyCode}&date=${selectedDate}`, '_blank')} 
+                onClick={() => {
+                  let url = `${API}/public/export/excel?company_code=${companyCode}&date=${selectedDate}`;
+                  // Adicionar filtro de turno baseado na guia ativa
+                  if (activePublicTab === 'dia') {
+                    url += '&turno=DIA';
+                  } else if (activePublicTab === 'noite') {
+                    url += '&turno=NOITE';
+                  }
+                  // activePublicTab === 'all' exporta ambos os turnos (como está agora)
+                  window.open(url, '_blank');
+                }}
                 variant="outline"
                 size="lg"
+                title={
+                  activePublicTab === 'dia' ? 'Exportar Turno DIA' :
+                  activePublicTab === 'noite' ? 'Exportar Turno NOITE' :
+                  'Exportar Todos (DIA + NOITE)'
+                }
               >
                 <Upload className="w-4 h-4 mr-2 rotate-180" />
                 Excel
