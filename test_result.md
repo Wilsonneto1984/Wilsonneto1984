@@ -271,15 +271,18 @@ frontend:
 
   - task: "Invalid Company Code Handling"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/PublicView.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Error handling implemented in PublicView.js lines 67-81. Shows error message for invalid company codes and provides button to go to administrative area."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: /public/EMPRESAINVALIDA shows proper error page with 'Acesso Negado' title, 'Código da empresa inválido ou empresa não encontrada' message, displays the invalid code 'EMPRESAINVALIDA', and provides 'Ir para Área Administrativa' button. Error handling working perfectly."
 
   - task: "Company Admin Public View Button"
     implemented: true
