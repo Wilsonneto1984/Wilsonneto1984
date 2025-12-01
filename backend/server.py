@@ -914,6 +914,63 @@ async def update_attendance(
     return Attendance(**updated)
 
 
+# ============ PUBLIC VIEW ROUTES (Com validação de company_code) ============
+
+@api_router.get("/public/employees")
+async def get_public_employees(company_code: str):
+    """Get employees for public view (requires company code)"""
+    # Verificar se código da empresa existe
+    company = await db.companies.find_one({"company_code": company_code}, {"_id": 0})
+    if not company:
+        raise HTTPException(status_code=404, detail="Invalid company code")
+    
+    if not company.get('active', True):
+        raise HTTPException(status_code=403, detail="Company account is inactive")
+    
+    # Buscar colaboradores ativos da empresa
+    employees = await db.employees.find({
+        "company_id": company['id'],
+        "active": True
+    }, {"_id": 0}).to_list(10000)
+    
+    for emp in employees:
+        if isinstance(emp.get('created_at'), str):
+            emp['created_at'] = datetime.fromisoformat(emp['created_at'])
+    
+    return employees
+
+
+@api_router.get("/public/attendance")
+async def get_public_attendance(
+    company_code: str,
+    date: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None
+):
+    """Get attendance for public view (requires company code)"""
+    # Verificar se código da empresa existe
+    company = await db.companies.find_one({"company_code": company_code}, {"_id": 0})
+    if not company:
+        raise HTTPException(status_code=404, detail="Invalid company code")
+    
+    if not company.get('active', True):
+        raise HTTPException(status_code=403, detail="Company account is inactive")
+    
+    query = {"company_id": company['id']}
+    
+    if date:
+        query["date"] = date
+    elif start_date and end_date:
+        query["date"] = {"$gte": start_date, "$lte": end_date}
+    
+    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
+    for record in records:
+        if isinstance(record.get('registered_at'), str):
+            record['registered_at'] = datetime.fromisoformat(record['registered_at'])
+    
+    return records
+
+
 # Mount the API router
 app.include_router(api_router)
 
