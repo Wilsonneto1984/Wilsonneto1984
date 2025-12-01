@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, Calendar, Search, LogIn, RefreshCw, Sun, Moon, Building2, TrendingUp } from "lucide-react";
+import { Users, Calendar, Search, LogIn, RefreshCw, Sun, Moon, Building2, TrendingUp, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
