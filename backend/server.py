@@ -1340,6 +1340,8 @@ async def get_available_plans():
 
 # ============ PAYMENT PROCESSING ROUTES ============
 
+from pydantic import BaseModel
+
 class LicensePaymentRequest(BaseModel):
     company_id: str
     plan_type: str  # monthly, semiannual, annual
