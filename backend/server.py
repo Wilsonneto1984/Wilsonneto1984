@@ -664,6 +664,116 @@ async def delete_shift(
 
 # ============ CSV IMPORT ROUTES ============
 
+
+# ============ SUBCONTRACTOR ROUTES ============
+
+from models import Subcontractor, SubcontractorCreate, SubcontractorUpdate
+
+@api_router.post("/subcontractors", response_model=Subcontractor)
+async def create_subcontractor(
+    subcontractor: SubcontractorCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create a new subcontractor"""
+    if current_user['role'] == 'company_viewer':
+        raise HTTPException(status_code=403, detail="Viewers cannot create subcontractors")
+    
+    company_id = current_user['company_id'] if current_user['role'] != 'super_admin' else None
+    if not company_id:
+        raise HTTPException(status_code=400, detail="Company ID required")
+    
+    subcontractor_dict = subcontractor.model_dump()
+    subcontractor_dict.update({
+        "id": str(uuid4()),
+        "company_id": company_id,
+        "active": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    await db.subcontractors.insert_one(subcontractor_dict)
+    
+    return Subcontractor(**subcontractor_dict)
+
+@api_router.get("/subcontractors", response_model=List[Subcontractor])
+async def get_subcontractors(
+    current_user: dict = Depends(get_current_user)
+):
+    """Get all subcontractors for company"""
+    company_id = current_user['company_id'] if current_user['role'] != 'super_admin' else None
+    if not company_id:
+        raise HTTPException(status_code=400, detail="Company ID required")
+    
+    subcontractors = await db.subcontractors.find(
+        {"company_id": company_id, "active": True},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    for sub in subcontractors:
+        if isinstance(sub.get('created_at'), str):
+            sub['created_at'] = datetime.fromisoformat(sub['created_at'])
+    
+    return subcontractors
+
+@api_router.put("/subcontractors/{subcontractor_id}", response_model=Subcontractor)
+async def update_subcontractor(
+    subcontractor_id: str,
+    subcontractor: SubcontractorUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update a subcontractor"""
+    if current_user['role'] == 'company_viewer':
+        raise HTTPException(status_code=403, detail="Viewers cannot update subcontractors")
+    
+    company_id = current_user['company_id'] if current_user['role'] != 'super_admin' else None
+    if not company_id:
+        raise HTTPException(status_code=400, detail="Company ID required")
+    
+    # Verificar se subcontratada existe e pertence à empresa
+    existing = await db.subcontractors.find_one(
+        {"id": subcontractor_id, "company_id": company_id}
+    )
+    if not existing:
+        raise HTTPException(status_code=404, detail="Subcontractor not found")
+    
+    # Atualizar apenas campos fornecidos
+    update_data = {k: v for k, v in subcontractor.model_dump().items() if v is not None}
+    
+    if update_data:
+        await db.subcontractors.update_one(
+            {"id": subcontractor_id},
+            {"$set": update_data}
+        )
+    
+    updated = await db.subcontractors.find_one({"id": subcontractor_id}, {"_id": 0})
+    if isinstance(updated.get('created_at'), str):
+        updated['created_at'] = datetime.fromisoformat(updated['created_at'])
+    
+    return Subcontractor(**updated)
+
+@api_router.delete("/subcontractors/{subcontractor_id}")
+async def delete_subcontractor(
+    subcontractor_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Delete (deactivate) a subcontractor"""
+    if current_user['role'] == 'company_viewer':
+        raise HTTPException(status_code=403, detail="Viewers cannot delete subcontractors")
+    
+    company_id = current_user['company_id'] if current_user['role'] != 'super_admin' else None
+    if not company_id:
+        raise HTTPException(status_code=400, detail="Company ID required")
+    
+    result = await db.subcontractors.update_one(
+        {"id": subcontractor_id, "company_id": company_id},
+        {"$set": {"active": False}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Subcontractor not found")
+    
+    return {"message": "Subcontractor deleted successfully"}
+
+
 @api_router.post("/import/csv")
 async def import_csv_attendance(
     file: UploadFile = File(...),
