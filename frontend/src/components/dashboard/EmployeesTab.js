@@ -32,6 +32,7 @@ function EmployeesTab({ employees, onRefresh, user }) {
     primeiro_acesso: ""
   });
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
 
   const isViewer = user?.role === 'company_viewer';
 
