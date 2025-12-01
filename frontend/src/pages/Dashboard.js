@@ -3,17 +3,21 @@ import axios from "axios";
 import { API } from "@/App";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Users, Calendar, Clock, LogOut, BarChart3 } from "lucide-react";
+import { Users, Calendar, Clock, LogOut, BarChart3, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import EmployeesTab from "@/components/dashboard/EmployeesTab";
 import AttendanceTab from "@/components/dashboard/AttendanceTab";
 import ShiftsTab from "@/components/dashboard/ShiftsTab";
 import HistoryTab from "@/components/dashboard/HistoryTab";
+import CompaniesTab from "@/components/dashboard/CompaniesTab";
 
 function Dashboard({ user, onLogout }) {
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const isSuperAdmin = user?.role === 'super_admin';
 
   useEffect(() => {
     fetchData();
@@ -22,12 +26,23 @@ function Dashboard({ user, onLogout }) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [employeesRes, shiftsRes] = await Promise.all([
+      const requests = [
         axios.get(`${API}/employees`),
         axios.get(`${API}/shifts`)
-      ]);
-      setEmployees(employeesRes.data);
-      setShifts(shiftsRes.data);
+      ];
+      
+      // Super admin também busca empresas
+      if (isSuperAdmin) {
+        requests.push(axios.get(`${API}/companies`));
+      }
+      
+      const responses = await Promise.all(requests);
+      setEmployees(responses[0].data);
+      setShifts(responses[1].data);
+      
+      if (isSuperAdmin && responses[2]) {
+        setCompanies(responses[2].data);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error("Erro ao carregar dados");
