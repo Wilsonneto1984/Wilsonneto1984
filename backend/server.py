@@ -1105,7 +1105,7 @@ async def export_public_excel(company_code: str, date: str, turno: Optional[str]
         
         # Criar aba para cada turno
         for turno_atual in turnos_to_export:
-            ws = wb.create_sheet(title=f"BASE {turno}")
+            ws = wb.create_sheet(title=f"BASE {turno_atual}")
             
             # Cabeçalhos
             headers = ["Chapa", "Nome", "Função", "Grupo", "M.O", "Hora Batida", "Status"]
@@ -1116,7 +1116,7 @@ async def export_public_excel(company_code: str, date: str, turno: Optional[str]
                 cell.alignment = Alignment(horizontal="center")
             
             # Filtrar colaboradores por turno
-            turno_employees = [e for e in employees if e['turno'] == turno]
+            turno_employees = [e for e in employees if e['turno'] == turno_atual]
             
             # Dados
             for row, emp in enumerate(turno_employees, 2):
