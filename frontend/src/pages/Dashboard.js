@@ -92,6 +92,7 @@ function Dashboard({ user, onLogout }) {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <ThemeToggle />
               {!isSuperAdmin && companyCode && (
                 <Button onClick={() => window.open(`/public/${companyCode}`, '_blank')} variant="outline" size="sm">
                   Visualizar Pública
