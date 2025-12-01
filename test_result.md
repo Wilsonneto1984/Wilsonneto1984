@@ -298,15 +298,18 @@ frontend:
 
   - task: "Root Route Redirect to Login"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "App.js lines 84-88 implements root route '/' redirect to '/login' using Navigate component."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: Accessing root URL '/' automatically redirects to '/login' and displays the login page with 'Sistema de Controle de Efetivo' title and login form. Redirect functionality working correctly."
 
   - task: "Multi-company Data Isolation"
     implemented: true
