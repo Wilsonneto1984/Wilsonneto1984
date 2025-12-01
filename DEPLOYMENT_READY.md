@@ -31,7 +31,7 @@ PLATFORM_COMMISSION_PERCENTAGE=10
 
 **Frontend (.env):**
 ```
-REACT_APP_BACKEND_URL=https://attendsmart-11.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://efetivo-pro.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 REACT_APP_ENABLE_VISUAL_EDITS=false
 ENABLE_HEALTH_CHECK=false
