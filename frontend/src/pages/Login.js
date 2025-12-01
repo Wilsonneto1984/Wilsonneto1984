@@ -114,7 +114,7 @@ function Login({ onLogin }) {
               
               <Button 
                 type="submit" 
-                className="w-full" 
+                className={`w-full ${isCompanyLogin ? 'bg-blue-600 hover:bg-blue-700' : 'bg-purple-600 hover:bg-purple-700'}`}
                 disabled={loading}
                 data-testid="login-submit-button"
               >
@@ -132,32 +132,35 @@ function Login({ onLogin }) {
               </Button>
             </form>
 
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm font-medium text-blue-900 mb-2">Credenciais de Teste:</p>
-              <div className="space-y-2">
-                <div>
-                  <p className="text-xs font-semibold text-blue-800">Super Admin:</p>
-                  <p className="text-sm text-blue-700">Email: <strong>admin@system.com</strong></p>
-                  <p className="text-sm text-blue-700">Senha: <strong>admin123</strong></p>
-                  <p className="text-xs text-blue-600 italic">(não precisa de código)</p>
-                </div>
-                <div className="border-t border-blue-200 pt-2">
-                  <p className="text-xs font-semibold text-blue-800">Empresa REVAP:</p>
+            {isCompanyLogin ? (
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm font-medium text-blue-900 mb-2">Credenciais de Teste - Empresa:</p>
+                <div className="space-y-1">
                   <p className="text-sm text-blue-700">Código: <strong>REVAP2024</strong></p>
                   <p className="text-sm text-blue-700">Email: <strong>admin@revap.com</strong></p>
                   <p className="text-sm text-blue-700">Senha: <strong>revap123</strong></p>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="mt-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <p className="text-sm font-medium text-purple-900 mb-2">Credenciais de Teste - Gestor:</p>
+                <div className="space-y-1">
+                  <p className="text-sm text-purple-700">Email: <strong>admin@system.com</strong></p>
+                  <p className="text-sm text-purple-700">Senha: <strong>admin123</strong></p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <div className="mt-6 text-center">
-          <a 
-            href="/" 
-            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="text-sm text-gray-600 hover:text-gray-900"
           >
-            ← Voltar para visualização pública
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Voltar para seleção de acesso
           </a>
         </div>
       </div>
