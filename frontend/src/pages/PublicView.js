@@ -579,7 +579,7 @@ function PublicView() {
         {/* Tabs por Turno */}
         <Card className="shadow-lg">
           <CardContent className="pt-6">
-            <Tabs defaultValue="all" className="space-y-6">
+            <Tabs value={activePublicTab} onValueChange={setActivePublicTab} className="space-y-6">
               <TabsList className="grid w-full grid-cols-3 h-12">
                 <TabsTrigger value="all" className="text-base">
                   <Users className="w-4 h-4 mr-2" />
