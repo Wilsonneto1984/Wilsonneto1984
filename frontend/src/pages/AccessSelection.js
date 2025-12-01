@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2, Shield, ArrowRight } from "lucide-react";
+import { Building2, Shield, ArrowRight, Plus } from "lucide-react";
 
 function AccessSelection() {
   const navigate = useNavigate();
@@ -99,7 +99,22 @@ function AccessSelection() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 space-y-4">
+          <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+            <p className="text-gray-700 font-medium mb-3">
+              Ainda não tem uma conta?
+            </p>
+            <Button
+              onClick={() => navigate('/register')}
+              size="lg"
+              variant="outline"
+              className="bg-white hover:bg-blue-50 border-2 border-blue-600 text-blue-600 font-semibold"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Cadastrar Nova Empresa (30 dias grátis)
+            </Button>
+          </div>
+          
           <p className="text-sm text-gray-500">
             Sistema de Gerenciamento Multi-Empresa • Versão 1.0
           </p>
