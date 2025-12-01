@@ -98,52 +98,59 @@ function Dashboard({ user, onLogout }) {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue={isSuperAdmin ? "companies" : "attendance"} className="space-y-6">
-          <TabsList className={`grid w-full ${isSuperAdmin ? 'grid-cols-2 lg:grid-cols-5' : 'grid-cols-2 lg:grid-cols-4'}`}>
-            {isSuperAdmin && (
-              <TabsTrigger value="companies" data-testid="tab-companies">
-                <Building2 className="w-4 h-4 mr-2" />
-                Empresas
-              </TabsTrigger>
-            )}
-            <TabsTrigger value="attendance" data-testid="tab-attendance">
-              <Calendar className="w-4 h-4 mr-2" />
-              Presença
-            </TabsTrigger>
-            <TabsTrigger value="employees" data-testid="tab-employees">
-              <Users className="w-4 h-4 mr-2" />
-              Funcionários
-            </TabsTrigger>
-            <TabsTrigger value="shifts" data-testid="tab-shifts">
-              <Clock className="w-4 h-4 mr-2" />
-              Turnos
-            </TabsTrigger>
-            <TabsTrigger value="history" data-testid="tab-history">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Histórico
-            </TabsTrigger>
-          </TabsList>
+          {isSuperAdmin ? (
+            // Super Admin - Apenas gestão de empresas
+            <>
+              <TabsList className="grid w-full grid-cols-1">
+                <TabsTrigger value="companies" data-testid="tab-companies">
+                  <Building2 className="w-4 h-4 mr-2" />
+                  Gerenciar Empresas
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="companies">
+                <CompaniesTab companies={companies} onRefresh={fetchData} />
+              </TabsContent>
+            </>
+          ) : (
+            // Company Admin/Viewer - Gestão operacional
+            <>
+              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+                <TabsTrigger value="attendance" data-testid="tab-attendance">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Presença
+                </TabsTrigger>
+                <TabsTrigger value="employees" data-testid="tab-employees">
+                  <Users className="w-4 h-4 mr-2" />
+                  Funcionários
+                </TabsTrigger>
+                <TabsTrigger value="shifts" data-testid="tab-shifts">
+                  <Clock className="w-4 h-4 mr-2" />
+                  Turnos
+                </TabsTrigger>
+                <TabsTrigger value="history" data-testid="tab-history">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Histórico
+                </TabsTrigger>
+              </TabsList>
 
-          {isSuperAdmin && (
-            <TabsContent value="companies">
-              <CompaniesTab companies={companies} onRefresh={fetchData} />
-            </TabsContent>
+              <TabsContent value="attendance">
+                <AttendanceTab employees={employees} shifts={shifts} onRefresh={fetchData} />
+              </TabsContent>
+
+              <TabsContent value="employees">
+                <EmployeesTab employees={employees} shifts={shifts} onRefresh={fetchData} user={user} />
+              </TabsContent>
+
+              <TabsContent value="shifts">
+                <ShiftsTab shifts={shifts} onRefresh={fetchData} />
+              </TabsContent>
+
+              <TabsContent value="history">
+                <HistoryTab employees={employees} />
+              </TabsContent>
+            </>
           )}
-
-          <TabsContent value="attendance">
-            <AttendanceTab employees={employees} shifts={shifts} onRefresh={fetchData} />
-          </TabsContent>
-
-          <TabsContent value="employees">
-            <EmployeesTab employees={employees} shifts={shifts} onRefresh={fetchData} user={user} />
-          </TabsContent>
-
-          <TabsContent value="shifts">
-            <ShiftsTab shifts={shifts} onRefresh={fetchData} />
-          </TabsContent>
-
-          <TabsContent value="history">
-            <HistoryTab employees={employees} />
-          </TabsContent>
         </Tabs>
       </div>
     </div>
