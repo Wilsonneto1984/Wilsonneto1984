@@ -9,6 +9,7 @@ import AccessSelection from "@/pages/AccessSelection";
 import Register from "@/pages/Register";
 import SubscriptionExpired from "@/pages/SubscriptionExpired";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
