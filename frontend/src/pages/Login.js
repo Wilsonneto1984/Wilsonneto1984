@@ -131,25 +131,6 @@ function Login({ onLogin }) {
                 )}
               </Button>
             </form>
-
-            {isCompanyLogin ? (
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm font-medium text-blue-900 mb-2">Credenciais de Teste - Empresa:</p>
-                <div className="space-y-1">
-                  <p className="text-sm text-blue-700">Código: <strong>REVAP2024</strong></p>
-                  <p className="text-sm text-blue-700">Email: <strong>admin@revap.com</strong></p>
-                  <p className="text-sm text-blue-700">Senha: <strong>revap123</strong></p>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <p className="text-sm font-medium text-purple-900 mb-2">Credenciais de Teste - Gestor:</p>
-                <div className="space-y-1">
-                  <p className="text-sm text-purple-700">Email: <strong>admin@system.com</strong></p>
-                  <p className="text-sm text-purple-700">Senha: <strong>admin123</strong></p>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
 
