@@ -11,11 +11,13 @@ import ShiftsTab from "@/components/dashboard/ShiftsTab";
 import HistoryTab from "@/components/dashboard/HistoryTab";
 import CompaniesTab from "@/components/dashboard/CompaniesTab";
 import SettingsTab from "@/components/dashboard/SettingsTab";
+import SubcontractorsTab from "@/components/dashboard/SubcontractorsTab";
 
 function Dashboard({ user, onLogout }) {
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [subcontractors, setSubcontractors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [companyCode, setCompanyCode] = useState(null);
 
@@ -36,14 +38,16 @@ function Dashboard({ user, onLogout }) {
         setCompanies(companiesRes.data);
       } else {
         // Company admin/viewer busca dados operacionais e company_code
-        const [employeesRes, shiftsRes, companyRes] = await Promise.all([
+        const [employeesRes, shiftsRes, companyRes, subcontractorsRes] = await Promise.all([
           axios.get(`${API}/employees`),
           axios.get(`${API}/shifts`),
-          axios.get(`${API}/companies/${user.company_id}`)
+          axios.get(`${API}/companies/${user.company_id}`),
+          axios.get(`${API}/subcontractors`)
         ]);
         setEmployees(employeesRes.data);
         setShifts(shiftsRes.data);
         setCompanyCode(companyRes.data.company_code);
+        setSubcontractors(subcontractorsRes.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -129,7 +133,7 @@ function Dashboard({ user, onLogout }) {
           ) : (
             // Company Admin/Viewer - Gestão operacional
             <>
-              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
                 <TabsTrigger value="attendance" data-testid="tab-attendance">
                   <Calendar className="w-4 h-4 mr-2" />
                   Presença
@@ -137,6 +141,10 @@ function Dashboard({ user, onLogout }) {
                 <TabsTrigger value="employees" data-testid="tab-employees">
                   <Users className="w-4 h-4 mr-2" />
                   Funcionários
+                </TabsTrigger>
+                <TabsTrigger value="subcontractors" data-testid="tab-subcontractors">
+                  <Building2 className="w-4 h-4 mr-2" />
+                  Subcontratadas
                 </TabsTrigger>
                 <TabsTrigger value="shifts" data-testid="tab-shifts">
                   <Clock className="w-4 h-4 mr-2" />
@@ -154,6 +162,10 @@ function Dashboard({ user, onLogout }) {
 
               <TabsContent value="employees">
                 <EmployeesTab employees={employees} shifts={shifts} onRefresh={fetchData} user={user} />
+              </TabsContent>
+
+              <TabsContent value="subcontractors">
+                <SubcontractorsTab subcontractors={subcontractors} onRefresh={fetchData} />
               </TabsContent>
 
               <TabsContent value="shifts">
