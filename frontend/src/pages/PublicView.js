@@ -270,9 +270,9 @@ function PublicView() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
-      <div className="bg-white border-b shadow-md">
+      <div className="bg-white dark:bg-gray-800 border-b shadow-md">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center space-x-4">
@@ -280,11 +280,12 @@ function PublicView() {
                 <Building2 className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Controle de Efetivo</h1>
-                <p className="text-sm text-gray-600 mt-1">Visualização Pública - Gestão de Presença</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Controle de Efetivo</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Visualização Pública - Gestão de Presença</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <ThemeToggle />
               <Button 
                 onClick={() => {
                   let url = `${API}/public/export/excel?company_code=${company_code}&date=${selectedDate}`;
