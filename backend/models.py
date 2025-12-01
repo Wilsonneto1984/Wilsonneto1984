@@ -51,6 +51,7 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    company_code: Optional[str] = None  # Código da empresa (obrigatório para company_admin e company_viewer)
 
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
