@@ -286,15 +286,18 @@ frontend:
 
   - task: "Company Admin Public View Button"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/pages/Dashboard.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Dashboard.js lines 89-93 shows 'Visualizar Pública' button for Company Admins that opens /public/{company_code} in new tab. Button only visible for non-super-admin users."
+      - working: false
+        agent: "testing"
+        comment: "❌ AUTHENTICATION ISSUE: Unable to successfully login as Company Admin (admin@revap.com / revap123 / REVAP2024) to test the 'Visualizar Pública' button. Login form accepts credentials but user is not properly authenticated to access dashboard. Backend logs show successful login API call but frontend authentication state not maintained. Requires investigation of JWT token handling or session management."
 
   - task: "Root Route Redirect to Login"
     implemented: true
