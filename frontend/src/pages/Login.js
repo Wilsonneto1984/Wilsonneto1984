@@ -126,8 +126,20 @@ function Login({ onLogin }) {
 
             <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-sm font-medium text-blue-900 mb-2">Credenciais de Teste:</p>
-              <p className="text-sm text-blue-700">Super Admin: <strong>admin@system.com</strong></p>
-              <p className="text-sm text-blue-700">Senha: <strong>admin123</strong></p>
+              <div className="space-y-2">
+                <div>
+                  <p className="text-xs font-semibold text-blue-800">Super Admin:</p>
+                  <p className="text-sm text-blue-700">Email: <strong>admin@system.com</strong></p>
+                  <p className="text-sm text-blue-700">Senha: <strong>admin123</strong></p>
+                  <p className="text-xs text-blue-600 italic">(não precisa de código)</p>
+                </div>
+                <div className="border-t border-blue-200 pt-2">
+                  <p className="text-xs font-semibold text-blue-800">Empresa REVAP:</p>
+                  <p className="text-sm text-blue-700">Código: <strong>REVAP2024</strong></p>
+                  <p className="text-sm text-blue-700">Email: <strong>admin@revap.com</strong></p>
+                  <p className="text-sm text-blue-700">Senha: <strong>revap123</strong></p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
