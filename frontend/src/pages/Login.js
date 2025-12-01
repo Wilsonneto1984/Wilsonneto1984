@@ -69,8 +69,8 @@ function Login({ onLogin }) {
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
                   required
                   data-testid="login-password-input"
                 />
