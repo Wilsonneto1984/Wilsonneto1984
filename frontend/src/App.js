@@ -75,14 +75,16 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          {/* Visualização Pública - APENAS para visualização de efetivo, NÃO para Super Admin */}
+          {/* Visualização Pública - Acesso via link direto sem senha */}
+          <Route 
+            path="/public/:company_code" 
+            element={<PublicView />} 
+          />
+          
+          {/* Rota raiz redireciona para login */}
           <Route 
             path="/" 
-            element={
-              isAuthenticated && user?.role === 'super_admin' ? 
-              <Navigate to="/dashboard" replace /> : 
-              <PublicView />
-            } 
+            element={<Navigate to="/login" replace />} 
           />
           
           <Route 
@@ -103,7 +105,7 @@ function App() {
             } 
           />
           
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" />
