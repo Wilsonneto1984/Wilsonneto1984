@@ -286,7 +286,7 @@ function PublicView() {
             <div className="flex items-center space-x-2">
               <Button 
                 onClick={() => {
-                  let url = `${API}/public/export/excel?company_code=${companyCode}&date=${selectedDate}`;
+                  let url = `${API}/public/export/excel?company_code=${company_code}&date=${selectedDate}`;
                   // Adicionar filtro de turno baseado na guia ativa
                   if (activePublicTab === 'dia') {
                     url += '&turno=DIA';
