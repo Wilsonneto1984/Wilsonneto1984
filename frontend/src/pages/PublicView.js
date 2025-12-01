@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, Calendar, Search, LogIn, RefreshCw, Sun, Moon, Building2, TrendingUp, Upload } from "lucide-react";
+import { Users, Calendar, Search, LogIn, RefreshCw, Sun, Moon, Building2, TrendingUp, Upload, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const statusConfig = {
   P: { label: "Presente", color: "bg-green-500", textColor: "text-green-700", bgColor: "bg-green-50" },
@@ -26,25 +26,29 @@ function PublicView() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [companyCode, setCompanyCode] = useState(localStorage.getItem('public_company_code') || '');
-  const [showCodeInput, setShowCodeInput] = useState(!localStorage.getItem('public_company_code'));
   const [activePublicTab, setActivePublicTab] = useState("all");
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { company_code } = useParams();
 
   useEffect(() => {
-    if (companyCode) {
+    if (company_code) {
       fetchData();
+    } else {
+      setError("Código da empresa não fornecido na URL");
+      setLoading(false);
     }
-  }, [selectedDate, companyCode]);
+  }, [selectedDate, company_code]);
 
   const fetchData = async () => {
-    if (!companyCode) {
-      setShowCodeInput(true);
+    if (!company_code) {
+      setError("Código da empresa não fornecido");
       setLoading(false);
       return;
     }
     
     setLoading(true);
+    setError(null);
     try {
       // Calcular data 30 dias atrás
       const endDate = selectedDate;
@@ -54,38 +58,27 @@ function PublicView() {
       
       // Buscar colaboradores ativos e presença do período usando endpoints públicos
       const [employeesRes, attendanceRes] = await Promise.all([
-        axios.get(`${API}/public/employees?company_code=${companyCode}`),
-        axios.get(`${API}/public/attendance?company_code=${companyCode}&start_date=${startDateStr}&end_date=${endDate}`)
+        axios.get(`${API}/public/employees?company_code=${company_code}`),
+        axios.get(`${API}/public/attendance?company_code=${company_code}&start_date=${startDateStr}&end_date=${endDate}`)
       ]);
       
       setEmployees(employeesRes.data);
       setAttendance(attendanceRes.data);
-      setShowCodeInput(false);
-      localStorage.setItem('public_company_code', companyCode);
     } catch (error) {
       console.error('Error fetching data:', error);
       if (error.response?.status === 404) {
+        setError("Código da empresa inválido ou empresa não encontrada");
         toast.error("Código da empresa inválido");
-        setShowCodeInput(true);
       } else if (error.response?.status === 403) {
+        setError("Empresa inativa ou sem permissão de acesso");
         toast.error("Empresa inativa");
       } else {
+        setError("Erro ao carregar dados da empresa");
         toast.error("Erro ao carregar dados");
       }
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCodeSubmit = (e) => {
-    e.preventDefault();
-    fetchData();
-  };
-
-  const handleChangeCompany = () => {
-    setShowCodeInput(true);
-    setCompanyCode('');
-    localStorage.removeItem('public_company_code');
   };
 
   // Combinar dados de colaboradores com presença DO DIA SELECIONADO
@@ -224,60 +217,39 @@ function PublicView() {
     </div>
   );
 
-  // Tela de entrada de código
-  if (showCodeInput) {
+  // Tela de erro - código inválido
+  if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-2xl">
           <CardHeader className="text-center">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-4 rounded-xl mx-auto w-16 h-16 flex items-center justify-center mb-4">
-              <Building2 className="w-8 h-8 text-white" />
+            <div className="bg-gradient-to-br from-red-600 to-red-700 p-4 rounded-xl mx-auto w-16 h-16 flex items-center justify-center mb-4">
+              <AlertCircle className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-2xl">Visualização Pública</CardTitle>
+            <CardTitle className="text-2xl">Acesso Negado</CardTitle>
             <CardDescription className="text-base mt-2">
-              Digite o código da empresa para acessar o efetivo
+              {error}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleCodeSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Código da Empresa</label>
-                <Input
-                  type="text"
-                  placeholder="Ex: REVAP2024"
-                  value={companyCode}
-                  onChange={(e) => setCompanyCode(e.target.value.toUpperCase())}
-                  className="text-lg h-12"
-                  required
-                  autoFocus
-                />
-                <p className="text-xs text-gray-500">
-                  Solicite o código com o administrador da sua empresa
+            <div className="space-y-4">
+              <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                <p className="text-sm text-red-800">
+                  <strong>Código da empresa:</strong> {company_code}
+                </p>
+                <p className="text-xs text-red-600 mt-2">
+                  Verifique se o código está correto e se a empresa está ativa.
                 </p>
               </div>
               
-              <Button type="submit" className="w-full h-12 text-base" disabled={!companyCode || loading}>
-                {loading ? 'Carregando...' : 'Acessar Efetivo'}
+              <Button
+                variant="default"
+                onClick={() => navigate('/login')}
+                className="w-full h-12"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Ir para Área Administrativa
               </Button>
-              
-              <div className="pt-4 border-t">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate('/login')}
-                  className="w-full"
-                >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Área Administrativa
-                </Button>
-              </div>
-            </form>
-            
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm font-medium text-blue-900 mb-2">Código de Teste:</p>
-              <p className="text-sm text-blue-700">
-                Empresa REVAP: <strong>REVAP2024</strong>
-              </p>
             </div>
           </CardContent>
         </Card>
