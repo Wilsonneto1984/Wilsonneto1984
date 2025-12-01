@@ -26,22 +26,20 @@ function Dashboard({ user, onLogout }) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const requests = [
-        axios.get(`${API}/employees`),
-        axios.get(`${API}/shifts`)
-      ];
-      
-      // Super admin também busca empresas
       if (isSuperAdmin) {
-        requests.push(axios.get(`${API}/companies`));
-      }
-      
-      const responses = await Promise.all(requests);
-      setEmployees(responses[0].data);
-      setShifts(responses[1].data);
-      
-      if (isSuperAdmin && responses[2]) {
-        setCompanies(responses[2].data);
+        // Super admin busca apenas empresas e usuários
+        const [companiesRes] = await Promise.all([
+          axios.get(`${API}/companies`)
+        ]);
+        setCompanies(companiesRes.data);
+      } else {
+        // Company admin/viewer busca dados operacionais
+        const [employeesRes, shiftsRes] = await Promise.all([
+          axios.get(`${API}/employees`),
+          axios.get(`${API}/shifts`)
+        ]);
+        setEmployees(employeesRes.data);
+        setShifts(shiftsRes.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
