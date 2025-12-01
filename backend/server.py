@@ -914,6 +914,90 @@ async def update_attendance(
     return Attendance(**updated)
 
 
+# ============ EXPORT ROUTES ============
+
+@api_router.get("/export/employees/excel")
+async def export_employees_excel(
+    turno: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Export employees to Excel"""
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment
+        from io import BytesIO
+        
+        company_id = current_user['company_id'] if current_user['role'] != 'super_admin' else None
+        if not company_id:
+            raise HTTPException(status_code=400, detail="Company ID required")
+        
+        query = {"company_id": company_id, "active": True}
+        if turno:
+            query["turno"] = turno
+        
+        employees = await db.employees.find(query, {"_id": 0}).to_list(10000)
+        
+        # Criar workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = f"Efetivo {turno if turno else 'Todos'}"
+        
+        # Estilo do cabeçalho
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF")
+        
+        # Cabeçalhos
+        headers = ["Chapa", "Nome", "Função", "Turno", "Grupo", "M.O", "Admissão", "Sindicato"]
+        for col, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col, value=header)
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Dados
+        for row, emp in enumerate(employees, 2):
+            ws.cell(row=row, column=1, value=emp['chapa'])
+            ws.cell(row=row, column=2, value=emp['nome'])
+            ws.cell(row=row, column=3, value=emp['funcao'])
+            ws.cell(row=row, column=4, value=emp['turno'])
+            ws.cell(row=row, column=5, value=emp['grupo'])
+            ws.cell(row=row, column=6, value=emp['mo'])
+            ws.cell(row=row, column=7, value=emp.get('admissao', ''))
+            ws.cell(row=row, column=8, value=emp.get('sindicato', ''))
+        
+        # Ajustar largura das colunas
+        for column in ws.columns:
+            max_length = 0
+            column = [cell for cell in column]
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            ws.column_dimensions[column[0].column_letter].width = adjusted_width
+        
+        # Salvar em BytesIO
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        from fastapi.responses import StreamingResponse
+        
+        filename = f"efetivo_{turno if turno else 'todos'}_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Error exporting to Excel: {e}")
+        raise HTTPException(status_code=500, detail=f"Error exporting: {str(e)}")
+
+
 # ============ PUBLIC VIEW ROUTES (Com validação de company_code) ============
 
 @api_router.get("/public/employees")
