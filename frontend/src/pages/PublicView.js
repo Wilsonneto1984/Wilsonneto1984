@@ -336,13 +336,6 @@ function PublicView() {
                 Excel
               </Button>
               <Button 
-                onClick={handleChangeCompany} 
-                variant="outline"
-                size="lg"
-              >
-                Trocar Empresa
-              </Button>
-              <Button 
                 onClick={() => navigate('/login')} 
                 variant="default"
                 size="lg"
