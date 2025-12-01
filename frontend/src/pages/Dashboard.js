@@ -10,6 +10,7 @@ import AttendanceTab from "@/components/dashboard/AttendanceTab";
 import ShiftsTab from "@/components/dashboard/ShiftsTab";
 import HistoryTab from "@/components/dashboard/HistoryTab";
 import CompaniesTab from "@/components/dashboard/CompaniesTab";
+import SettingsTab from "@/components/dashboard/SettingsTab";
 
 function Dashboard({ user, onLogout }) {
   const [employees, setEmployees] = useState([]);
