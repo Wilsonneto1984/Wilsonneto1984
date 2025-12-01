@@ -5,16 +5,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, Calendar, Search, LogIn, RefreshCw } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Users, Calendar, Search, LogIn, RefreshCw, Sun, Moon, Building2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 const statusConfig = {
-  present: { label: "Presente", color: "bg-green-500", textColor: "text-green-700", bgColor: "bg-green-50" },
-  absent: { label: "Falta", color: "bg-red-500", textColor: "text-red-700", bgColor: "bg-red-50" },
-  medical_leave: { label: "Atestado", color: "bg-blue-500", textColor: "text-blue-700", bgColor: "bg-blue-50" },
-  day_off: { label: "Folga", color: "bg-purple-500", textColor: "text-purple-700", bgColor: "bg-purple-50" },
-  vacation: { label: "Férias", color: "bg-yellow-500", textColor: "text-yellow-700", bgColor: "bg-yellow-50" },
+  P: { label: "Presente", color: "bg-green-500", textColor: "text-green-700", bgColor: "bg-green-50" },
+  PN: { label: "Presente Noite", color: "bg-blue-500", textColor: "text-blue-700", bgColor: "bg-blue-50" },
+  FALTA: { label: "Falta", color: "bg-red-500", textColor: "text-red-700", bgColor: "bg-red-50" },
+  ATE: { label: "Atestado", color: "bg-yellow-500", textColor: "text-yellow-700", bgColor: "bg-yellow-50" },
+  FO: { label: "Folga", color: "bg-purple-500", textColor: "text-purple-700", bgColor: "bg-purple-50" },
   not_registered: { label: "Não Registrado", color: "bg-gray-400", textColor: "text-gray-700", bgColor: "bg-gray-50" },
 };
 
