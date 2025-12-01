@@ -661,10 +661,11 @@ class EmployeeManagementTester:
         
         response = self.make_request("POST", "/employees", employee_data, token=self.viewer_token)
         
-        if response and response.status_code == 403:
+        if response is not None and response.status_code == 403:
             self.log_result("Viewer Create Employee Forbidden", True, "Correctly forbidden (403)")
         else:
-            self.log_result("Viewer Create Employee Forbidden", False, f"Expected 403, got {response.status_code if response else 'No response'}")
+            status_code = response.status_code if response is not None else "No response"
+            self.log_result("Viewer Create Employee Forbidden", False, f"Expected 403, got {status_code}")
     
     def test_24_reactivate_employee(self):
         """Test 24: Reactivate Employee (viewer can do this)"""
