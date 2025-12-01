@@ -5,6 +5,7 @@ import axios from "axios";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import PublicView from "@/pages/PublicView";
+import AccessSelection from "@/pages/AccessSelection";
 import { Toaster } from "@/components/ui/sonner";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -81,14 +82,19 @@ function App() {
             element={<PublicView />} 
           />
           
-          {/* Rota raiz redireciona para login */}
+          {/* Página de Seleção de Acesso */}
           <Route 
             path="/" 
-            element={<Navigate to="/login" replace />} 
+            element={
+              isAuthenticated ? 
+              <Navigate to="/dashboard" replace /> : 
+              <AccessSelection />
+            } 
           />
           
+          {/* Login com modo (empresa ou admin) */}
           <Route 
-            path="/login" 
+            path="/login/:mode" 
             element={
               isAuthenticated ? 
               <Navigate to="/dashboard" replace /> : 
@@ -96,16 +102,22 @@ function App() {
             } 
           />
           
+          {/* Rota antiga de login redireciona para seleção */}
+          <Route 
+            path="/login" 
+            element={<Navigate to="/" replace />} 
+          />
+          
           <Route 
             path="/dashboard" 
             element={
               isAuthenticated ? 
               <Dashboard user={user} onLogout={handleLogout} /> : 
-              <Navigate to="/login" replace />
+              <Navigate to="/" replace />
             } 
           />
           
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" />
