@@ -105,6 +105,26 @@ function CompaniesTab({ companies, onRefresh }) {
     return date < new Date();
   };
 
+  const handleViewUsers = async (company) => {
+    try {
+      const response = await axios.get(`${API}/users?company_id=${company.id}`);
+      setSelectedCompanyUsers(response.data);
+      setUsersDialogOpen(true);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast.error("Erro ao buscar usuários");
+    }
+  };
+
+  const getDaysUntilExpiry = (dateStr) => {
+    if (!dateStr) return null;
+    const expiryDate = new Date(dateStr);
+    const today = new Date();
+    const diffTime = expiryDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
   return (
     <div className="space-y-6">
       <Card>
