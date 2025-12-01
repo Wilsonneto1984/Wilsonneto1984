@@ -60,9 +60,11 @@ function PublicView() {
     }
   };
 
-  // Combinar dados de colaboradores com presença
+  // Combinar dados de colaboradores com presença DO DIA SELECIONADO
   const employeesWithAttendance = employees.map(emp => {
-    const attendanceRecord = attendance.find(a => a.employee_chapa === emp.chapa);
+    const attendanceRecord = attendance.find(a => 
+      a.employee_chapa === emp.chapa && a.date === selectedDate
+    );
     return {
       ...emp,
       attendance_status: attendanceRecord?.status || 'not_registered',
