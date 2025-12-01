@@ -173,12 +173,18 @@ async def create_company(
     if existing:
         raise HTTPException(status_code=400, detail="Company name already exists")
     
+    # Verificar se código da empresa já existe
+    existing_code = await db.companies.find_one({"company_code": company_data.company_code})
+    if existing_code:
+        raise HTTPException(status_code=400, detail="Company code already exists")
+    
     existing_user = await db.users.find_one({"email": company_data.admin_email})
     if existing_user:
         raise HTTPException(status_code=400, detail="Admin email already registered")
     
     company = Company(
         name=company_data.name,
+        company_code=company_data.company_code,
         subscription_type=company_data.subscription_type
     )
     
