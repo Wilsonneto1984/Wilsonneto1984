@@ -75,7 +75,9 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
+          {/* Visualização Pública - APENAS para empresas, NÃO para Super Admin */}
           <Route path="/" element={<PublicView />} />
+          
           <Route 
             path="/login" 
             element={
@@ -84,6 +86,7 @@ function App() {
               <Login onLogin={handleLogin} />
             } 
           />
+          
           <Route 
             path="/dashboard" 
             element={
@@ -92,6 +95,7 @@ function App() {
               <Navigate to="/login" replace />
             } 
           />
+          
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
