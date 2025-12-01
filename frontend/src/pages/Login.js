@@ -94,29 +94,23 @@ function Login({ onLogin }) {
                 />
               </div>
               
-              {showCompanyCode && (
+              {isCompanyLogin && (
                 <div className="space-y-2">
                   <Label htmlFor="company_code">Código da Empresa</Label>
                   <Input
                     id="company_code"
                     type="text"
-                    placeholder="Digite o código da empresa"
+                    placeholder="Ex: REVAP2024"
                     value={formData.company_code}
-                    onChange={(e) => setFormData({...formData, company_code: e.target.value})}
+                    onChange={(e) => setFormData({...formData, company_code: e.target.value.toUpperCase()})}
+                    required
                     data-testid="login-company-code-input"
                   />
+                  <p className="text-xs text-gray-500">
+                    Solicite o código com o administrador do sistema
+                  </p>
                 </div>
               )}
-              
-              <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setShowCompanyCode(!showCompanyCode)}
-                  className="text-sm text-blue-600 hover:text-blue-800"
-                >
-                  {showCompanyCode ? 'Ocultar código da empresa' : 'Usar código da empresa'}
-                </button>
-              </div>
               
               <Button 
                 type="submit" 
