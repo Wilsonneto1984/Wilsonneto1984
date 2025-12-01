@@ -1257,6 +1257,216 @@ async def export_public_excel(company_code: str, date: str, turno: Optional[str]
         raise HTTPException(status_code=500, detail=f"Error exporting: {str(e)}")
 
 
+# ============ PAYMENT SETTINGS ROUTES ============
+
+from payment_config import (
+    PaymentSettings, 
+    get_payment_settings, 
+    save_payment_settings,
+    is_payment_configured,
+    get_plan_price,
+    calculate_subscription_end_date
+)
+
+@api_router.get("/settings/payment", response_model=PaymentSettings)
+async def get_payment_config(current_user: dict = Depends(get_current_user)):
+    """Get payment configuration (Super Admin only)"""
+    if current_user['role'] != 'super_admin':
+        raise HTTPException(status_code=403, detail="Only super admin can access settings")
+    
+    return get_payment_settings()
+
+@api_router.post("/settings/payment")
+async def save_payment_config(
+    settings: PaymentSettings,
+    current_user: dict = Depends(get_current_user)
+):
+    """Save payment configuration (Super Admin only)"""
+    if current_user['role'] != 'super_admin':
+        raise HTTPException(status_code=403, detail="Only super admin can access settings")
+    
+    success = save_payment_settings(settings)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to save settings")
+    
+    return {"message": "Settings saved successfully"}
+
+@api_router.get("/settings/payment/status")
+async def get_payment_status():
+    """Get payment system status (public endpoint)"""
+    return {
+        "configured": is_payment_configured(),
+        "message": "Payment system is configured" if is_payment_configured() else "Payment system not configured"
+    }
+
+@api_router.get("/settings/plans")
+async def get_available_plans():
+    """Get available subscription plans with prices"""
+    settings = get_payment_settings()
+    
+    plans = []
+    if settings.monthly_price:
+        plans.append({
+            "id": "monthly",
+            "name": "Mensal",
+            "duration": "1 mês",
+            "price": float(settings.monthly_price),
+            "description": "Renovação mensal automática"
+        })
+    
+    if settings.semiannual_price:
+        plans.append({
+            "id": "semiannual",
+            "name": "Semestral",
+            "duration": "6 meses",
+            "price": float(settings.semiannual_price),
+            "description": "Economia de longo prazo"
+        })
+    
+    if settings.annual_price:
+        plans.append({
+            "id": "annual",
+            "name": "Anual",
+            "duration": "12 meses",
+            "price": float(settings.annual_price),
+            "description": "Melhor custo-benefício"
+        })
+    
+    return {
+        "plans": plans,
+        "configured": len(plans) > 0
+    }
+
+
+# ============ PAYMENT PROCESSING ROUTES ============
+
+class LicensePaymentRequest(BaseModel):
+    company_id: str
+    plan_type: str  # monthly, semiannual, annual
+    payment_method: str = "credit_card"
+    card_token: Optional[str] = None  # Token do Mercado Pago
+    payer_email: str
+    payer_name: str
+
+@api_router.post("/payments/license")
+async def process_license_payment(
+    payment_request: LicensePaymentRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Process license payment for a company"""
+    
+    # Verificar se pagamento está configurado
+    if not is_payment_configured():
+        raise HTTPException(
+            status_code=503,
+            detail="Payment system not configured. Please contact administrator."
+        )
+    
+    # Buscar empresa
+    company = await db.companies.find_one(
+        {"id": payment_request.company_id},
+        {"_id": 0}
+    )
+    
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+    
+    # Verificar permissões (Super Admin ou Admin da própria empresa)
+    if current_user['role'] != 'super_admin':
+        if current_user['company_id'] != payment_request.company_id:
+            raise HTTPException(status_code=403, detail="Not authorized")
+    
+    # Obter preço do plano
+    plan_price = get_plan_price(payment_request.plan_type)
+    if plan_price == 0:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Plan {payment_request.plan_type} not available or not configured"
+        )
+    
+    # Calcular data de expiração
+    new_expiration_date = calculate_subscription_end_date(payment_request.plan_type)
+    
+    # TODO: Integrar com Mercado Pago SDK quando credenciais estiverem configuradas
+    # Por enquanto, simular pagamento aprovado
+    settings = get_payment_settings()
+    
+    if settings.mp_access_token and payment_request.card_token:
+        # Aqui seria a chamada real ao Mercado Pago
+        # import mercadopago
+        # sdk = mercadopago.SDK(settings.mp_access_token)
+        # result = sdk.payment().create({...})
+        
+        # Por enquanto, simular aprovação
+        payment_approved = True
+    else:
+        # Modo simulação - aprovar automaticamente
+        payment_approved = True
+    
+    if payment_approved:
+        # Atualizar empresa com nova data de expiração
+        await db.companies.update_one(
+            {"id": payment_request.company_id},
+            {
+                "$set": {
+                    "subscription_expires_at": new_expiration_date.isoformat(),
+                    "subscription_type": payment_request.plan_type,
+                    "active": True
+                }
+            }
+        )
+        
+        # Criar registro de pagamento
+        payment_record = {
+            "id": str(uuid4()),
+            "company_id": payment_request.company_id,
+            "company_name": company.get("name"),
+            "plan_type": payment_request.plan_type,
+            "amount": plan_price,
+            "status": "approved",
+            "payer_email": payment_request.payer_email,
+            "payer_name": payment_request.payer_name,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "expires_at": new_expiration_date.isoformat()
+        }
+        
+        await db.payments.insert_one(payment_record)
+        
+        return {
+            "success": True,
+            "message": "Payment processed successfully",
+            "payment_id": payment_record["id"],
+            "new_expiration_date": new_expiration_date.isoformat(),
+            "plan_type": payment_request.plan_type,
+            "amount": plan_price
+        }
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Payment was rejected. Please try again."
+        )
+
+@api_router.get("/payments/history/{company_id}")
+async def get_payment_history(
+    company_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get payment history for a company"""
+    
+    # Verificar permissões
+    if current_user['role'] != 'super_admin':
+        if current_user['company_id'] != company_id:
+            raise HTTPException(status_code=403, detail="Not authorized")
+    
+    payments = await db.payments.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    return {"payments": payments}
+
+
+
 # Mount the API router
 app.include_router(api_router)
 
