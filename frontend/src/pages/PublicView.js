@@ -35,10 +35,16 @@ function PublicView() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Buscar colaboradores ativos e presença do dia
+      // Calcular data 30 dias atrás
+      const endDate = selectedDate;
+      const startDate = new Date(selectedDate);
+      startDate.setDate(startDate.getDate() - 30);
+      const startDateStr = startDate.toISOString().split('T')[0];
+      
+      // Buscar colaboradores ativos e presença do período (últimos 30 dias)
       const [employeesRes, attendanceRes] = await Promise.all([
         axios.get(`${API}/employees?active_only=true`),
-        axios.get(`${API}/attendance?date=${selectedDate}`)
+        axios.get(`${API}/attendance?start_date=${startDateStr}&end_date=${endDate}`)
       ]);
       
       setEmployees(employeesRes.data);
