@@ -56,6 +56,18 @@ function App() {
     }
   };
 
+  const checkSubscriptionExpiration = (company) => {
+    if (!company.subscription_expires_at) return;
+    
+    const expirationDate = new Date(company.subscription_expires_at);
+    const now = new Date();
+    
+    // Se expirou e não estamos na página de assinatura expirada
+    if (expirationDate < now && window.location.pathname !== '/subscription-expired') {
+      window.location.href = '/subscription-expired';
+    }
+  };
+
   const handleLogin = (token, userData) => {
     localStorage.setItem('token', token);
     setUser(userData);
