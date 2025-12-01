@@ -109,7 +109,7 @@ function Dashboard({ user, onLogout }) {
           </TabsContent>
 
           <TabsContent value="employees">
-            <EmployeesTab employees={employees} shifts={shifts} onRefresh={fetchData} />
+            <EmployeesTab employees={employees} shifts={shifts} onRefresh={fetchData} user={user} />
           </TabsContent>
 
           <TabsContent value="shifts">
