@@ -773,6 +773,93 @@ async def import_csv_attendance(
     return results
 
 
+@api_router.post("/import/employees/csv")
+async def import_csv_employees(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Import CSV employee registration data
+    Format: chapa, nome, funcao, data_admissao
+    Default values:
+    - turno: DIA (can be edited later)
+    - sindicato: 1 (can be edited later)
+    - grupo: empty (can be edited later)
+    - mo: empty (can be edited later)
+    - primeiro_acesso: empty (can be edited later)
+    """
+    if current_user['role'] == 'company_viewer':
+        raise HTTPException(status_code=403, detail="Viewers cannot import data")
+    
+    company_id = current_user['company_id'] if current_user['role'] != 'super_admin' else None
+    if not company_id:
+        raise HTTPException(status_code=400, detail="Company ID required")
+    
+    content = await file.read()
+    decoded_content = content.decode('utf-8')
+    csv_reader = csv.DictReader(io.StringIO(decoded_content))
+    
+    results = {
+        "processed": 0,
+        "created": 0,
+        "updated": 0,
+        "errors": []
+    }
+    
+    for row in csv_reader:
+        try:
+            chapa = row.get('chapa', '').strip()
+            nome = row.get('nome', '').strip()
+            funcao = row.get('funcao', '').strip()
+            data_admissao = row.get('data_admissao', '').strip()
+            
+            if not chapa or not nome or not funcao:
+                results["errors"].append(f"Missing required fields for row: {row}")
+                continue
+            
+            # Check if employee already exists
+            existing_employee = await db.employees.find_one({
+                "company_id": company_id,
+                "chapa": chapa
+            })
+            
+            employee_data = {
+                "chapa": chapa,
+                "nome": nome,
+                "funcao": funcao,
+                "turno": "DIA",  # Default to DIA
+                "grupo": "",  # Empty, to be edited later
+                "mo": "",  # Empty, to be edited later
+                "admissao": data_admissao if data_admissao else None,
+                "sindicato": "1",  # Default to 1
+                "primeiro_acesso": "",  # Empty, to be edited later
+                "active": True,
+                "company_id": company_id
+            }
+            
+            if existing_employee:
+                # Update existing employee
+                await db.employees.update_one(
+                    {"company_id": company_id, "chapa": chapa},
+                    {"$set": employee_data}
+                )
+                results["updated"] += 1
+            else:
+                # Create new employee
+                employee_data["id"] = str(uuid4())
+                employee_data["created_at"] = datetime.now(timezone.utc).isoformat()
+                await db.employees.insert_one(employee_data)
+                results["created"] += 1
+            
+            results["processed"] += 1
+            
+        except Exception as e:
+            results["errors"].append(f"Error processing row {row.get('chapa', 'unknown')}: {str(e)}")
+            continue
+    
+    return results
+
+
 # ============ ATTENDANCE ROUTES ============
 
 @api_router.post("/attendance", response_model=Attendance)
