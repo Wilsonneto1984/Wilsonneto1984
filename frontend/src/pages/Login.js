@@ -79,6 +79,31 @@ function Login({ onLogin }) {
                   data-testid="login-password-input"
                 />
               </div>
+              
+              {showCompanyCode && (
+                <div className="space-y-2">
+                  <Label htmlFor="company_code">Código da Empresa</Label>
+                  <Input
+                    id="company_code"
+                    type="text"
+                    placeholder="Digite o código da empresa"
+                    value={formData.company_code}
+                    onChange={(e) => setFormData({...formData, company_code: e.target.value})}
+                    data-testid="login-company-code-input"
+                  />
+                </div>
+              )}
+              
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setShowCompanyCode(!showCompanyCode)}
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  {showCompanyCode ? 'Ocultar código da empresa' : 'Usar código da empresa'}
+                </button>
+              </div>
+              
               <Button 
                 type="submit" 
                 className="w-full" 
