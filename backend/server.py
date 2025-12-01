@@ -990,7 +990,15 @@ async def export_employees_excel(
         
         from fastapi.responses import StreamingResponse
         
-        filename = f"efetivo_{turno if turno else 'todos'}_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        # Gerar nome do arquivo baseado nos filtros
+        if not active:
+            filename_suffix = "desmobilizados"
+        elif turno:
+            filename_suffix = f"turno_{turno.lower()}"
+        else:
+            filename_suffix = "todos"
+        
+        filename = f"efetivo_{filename_suffix}_{datetime.now().strftime('%Y%m%d')}.xlsx"
         
         return StreamingResponse(
             output,
