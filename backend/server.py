@@ -1055,6 +1055,95 @@ async def get_public_attendance(
     return records
 
 
+@api_router.get("/public/export/excel")
+async def export_public_excel(company_code: str, date: str):
+    """Export public view to Excel"""
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment
+        from io import BytesIO
+        
+        # Verificar código da empresa
+        company = await db.companies.find_one({"company_code": company_code}, {"_id": 0})
+        if not company:
+            raise HTTPException(status_code=404, detail="Invalid company code")
+        
+        # Buscar colaboradores e presença
+        employees = await db.employees.find({"company_id": company['id'], "active": True}, {"_id": 0}).to_list(10000)
+        attendance = await db.attendance.find({"company_id": company['id'], "date": date}, {"_id": 0}).to_list(10000)
+        
+        # Criar workbook com múltiplas abas
+        wb = openpyxl.Workbook()
+        
+        # Remover aba padrão
+        wb.remove(wb.active)
+        
+        # Estilo do cabeçalho
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF")
+        
+        # Criar aba para cada turno
+        for turno in ["DIA", "NOITE"]:
+            ws = wb.create_sheet(title=f"BASE {turno}")
+            
+            # Cabeçalhos
+            headers = ["Chapa", "Nome", "Função", "Grupo", "M.O", "Hora Batida", "Status"]
+            for col, header in enumerate(headers, 1):
+                cell = ws.cell(row=1, column=col, value=header)
+                cell.fill = header_fill
+                cell.font = header_font
+                cell.alignment = Alignment(horizontal="center")
+            
+            # Filtrar colaboradores por turno
+            turno_employees = [e for e in employees if e['turno'] == turno]
+            
+            # Dados
+            for row, emp in enumerate(turno_employees, 2):
+                att = next((a for a in attendance if a['employee_chapa'] == emp['chapa']), None)
+                status = att['status'] if att else 'N/R'
+                hora = att.get('hora_batida', '') if att else ''
+                
+                ws.cell(row=row, column=1, value=emp['chapa'])
+                ws.cell(row=row, column=2, value=emp['nome'])
+                ws.cell(row=row, column=3, value=emp['funcao'])
+                ws.cell(row=row, column=4, value=emp['grupo'])
+                ws.cell(row=row, column=5, value=emp['mo'])
+                ws.cell(row=row, column=6, value=hora)
+                ws.cell(row=row, column=7, value=status)
+            
+            # Ajustar largura
+            for column in ws.columns:
+                max_length = 0
+                column = [cell for cell in column]
+                for cell in column:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(cell.value)
+                    except:
+                        pass
+                adjusted_width = (max_length + 2)
+                ws.column_dimensions[column[0].column_letter].width = adjusted_width
+        
+        # Salvar
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        from fastapi.responses import StreamingResponse
+        
+        filename = f"efetivo_{company['name'].replace(' ', '_')}_{date}.xlsx"
+        
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Error exporting to Excel: {e}")
+        raise HTTPException(status_code=500, detail=f"Error exporting: {str(e)}")
+
+
 # Mount the API router
 app.include_router(api_router)
 
