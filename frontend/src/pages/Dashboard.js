@@ -83,9 +83,11 @@ function Dashboard({ user, onLogout }) {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Button onClick={() => window.open('/', '_blank')} variant="outline" size="sm">
-                Visualizar Pública
-              </Button>
+              {!isSuperAdmin && (
+                <Button onClick={() => window.open('/', '_blank')} variant="outline" size="sm">
+                  Visualizar Pública
+                </Button>
+              )}
               <Button onClick={handleLogout} variant="destructive" size="sm" data-testid="logout-button">
                 <LogOut className="w-4 h-4 mr-2" />
                 Sair
