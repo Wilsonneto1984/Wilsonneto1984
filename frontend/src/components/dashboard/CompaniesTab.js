@@ -125,8 +125,74 @@ function CompaniesTab({ companies, onRefresh }) {
     return diffDays;
   };
 
+  // Calcular estatísticas
+  const totalCompanies = companies.length;
+  const activeCompanies = companies.filter(c => c.active).length;
+  const expiredCompanies = companies.filter(c => isExpired(c.subscription_expires_at)).length;
+  const expiringSoon = companies.filter(c => {
+    const days = getDaysUntilExpiry(c.subscription_expires_at);
+    return days !== null && days > 0 && days <= 7;
+  }).length;
+
   return (
     <div className="space-y-6">
+      {/* Cards de Estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total de Empresas</p>
+                <p className="text-3xl font-bold text-gray-900 mt-1">{totalCompanies}</p>
+              </div>
+              <Building2 className="w-10 h-10 text-blue-600 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Empresas Ativas</p>
+                <p className="text-3xl font-bold text-green-600 mt-1">{activeCompanies}</p>
+              </div>
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <span className="text-green-600 text-xl font-bold">✓</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Expiram em 7 dias</p>
+                <p className="text-3xl font-bold text-orange-600 mt-1">{expiringSoon}</p>
+              </div>
+              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                <span className="text-orange-600 text-xl">⚠</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Expiradas</p>
+                <p className="text-3xl font-bold text-red-600 mt-1">{expiredCompanies}</p>
+              </div>
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <span className="text-red-600 text-xl">✕</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
