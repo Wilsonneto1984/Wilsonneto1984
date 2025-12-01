@@ -474,7 +474,7 @@ function EmployeesTab({ employees, onRefresh, user }) {
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="all" className="space-y-4">
+          <Tabs defaultValue="all" className="space-y-4" onValueChange={(value) => setActiveTab(value)}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="all">
                 Todos ({activeEmployees.length})
