@@ -15,6 +15,8 @@ import { Building2, Plus, Edit, Eye, UserPlus, Key } from "lucide-react";
 function CompaniesTab({ companies, onRefresh }) {
   const [open, setOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
+  const [usersDialogOpen, setUsersDialogOpen] = useState(false);
+  const [selectedCompanyUsers, setSelectedCompanyUsers] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company_code: "",
