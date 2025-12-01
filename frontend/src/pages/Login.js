@@ -6,15 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Users, Lock } from "lucide-react";
+import { Users, Lock, Building2, Shield, ArrowLeft } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
 
 function Login({ onLogin }) {
+  const { mode } = useParams(); // 'empresa' ou 'admin'
+  const navigate = useNavigate();
+  const isCompanyLogin = mode === 'empresa';
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     company_code: "",
   });
-  const [showCompanyCode, setShowCompanyCode] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -41,11 +45,21 @@ function Login({ onLogin }) {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
-            <Users className="w-8 h-8 text-white" />
+          <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
+            isCompanyLogin ? 'bg-blue-600' : 'bg-purple-600'
+          }`}>
+            {isCompanyLogin ? (
+              <Building2 className="w-8 h-8 text-white" />
+            ) : (
+              <Shield className="w-8 h-8 text-white" />
+            )}
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Sistema de Controle de Efetivo</h1>
-          <p className="text-gray-600 mt-2">Área Administrativa</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {isCompanyLogin ? 'Acesso Empresa' : 'Gestor da Plataforma'}
+          </h1>
+          <p className="text-gray-600 mt-2">
+            {isCompanyLogin ? 'Área Administrativa da Empresa' : 'Área de Administração da Plataforma'}
+          </p>
         </div>
 
         <Card>
