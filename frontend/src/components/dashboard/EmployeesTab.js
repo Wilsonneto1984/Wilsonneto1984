@@ -309,14 +309,24 @@ function EmployeesTab({ employees, onRefresh, user }) {
                 Total: {employees.length} | Ativos: {activeEmployees.length} | Desmobilizados: {inactiveEmployees.length}
               </CardDescription>
             </div>
-            {!isViewer && (
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button onClick={() => handleOpenDialog()}>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Adicionar Colaborador
-                  </Button>
-                </DialogTrigger>
+            <div className="flex space-x-2">
+              {/* Botão de Exportação */}
+              <Button
+                variant="outline"
+                onClick={() => window.open(`${API}/export/employees/excel`, '_blank')}
+              >
+                <Upload className="w-4 h-4 mr-2 rotate-180" />
+                Exportar Excel
+              </Button>
+              
+              {!isViewer && (
+                <Dialog open={open} onOpenChange={setOpen}>
+                  <DialogTrigger asChild>
+                    <Button onClick={() => handleOpenDialog()}>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Adicionar Colaborador
+                    </Button>
+                  </DialogTrigger>
                 <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
