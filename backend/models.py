@@ -109,6 +109,28 @@ class Employee(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
+# ============ SUBCONTRACTOR MODELS ============
+
+class SubcontractorCreate(BaseModel):
+    name: str  # Nome da empresa subcontratada
+    employee_count: int  # Quantidade de funcionários
+
+class SubcontractorUpdate(BaseModel):
+    name: Optional[str] = None
+    employee_count: Optional[int] = None
+    active: Optional[bool] = None
+
+class Subcontractor(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    company_id: str
+    name: str
+    employee_count: int
+    active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+
 # ============ SHIFT MODELS ============
 
 class ShiftCreate(BaseModel):
