@@ -1152,7 +1152,11 @@ async def export_public_excel(company_code: str, date: str, turno: Optional[str]
         
         from fastapi.responses import StreamingResponse
         
-        filename = f"efetivo_{company['name'].replace(' ', '_')}_{date}.xlsx"
+        # Nome do arquivo baseado no filtro
+        if turno:
+            filename = f"efetivo_{company['name'].replace(' ', '_')}_{turno}_{date}.xlsx"
+        else:
+            filename = f"efetivo_{company['name'].replace(' ', '_')}_{date}.xlsx"
         
         return StreamingResponse(
             output,
