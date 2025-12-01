@@ -93,8 +93,9 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <BrowserRouter>
+    <ThemeProvider>
+      <div className="App dark:bg-gray-900 dark:text-white min-h-screen">
+        <BrowserRouter>
         <Routes>
           {/* Visualização Pública - Acesso via link direto sem senha */}
           <Route 
@@ -156,8 +157,9 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-      <Toaster position="top-right" />
-    </div>
+        <Toaster position="top-right" />
+      </div>
+    </ThemeProvider>
   );
 }
 
