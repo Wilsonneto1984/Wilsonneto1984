@@ -102,6 +102,37 @@ function PublicView() {
     }
   };
 
+  // Calcular Recordistas (colaboradores com mais ocorrências)
+  const calculateRecordistas = (status, limit = 5) => {
+    // Contar ocorrências por colaborador
+    const counts = {};
+    
+    attendance.forEach(att => {
+      if (att.status === status) {
+        const employee = employees.find(e => e.chapa === att.employee_chapa);
+        if (employee) {
+          if (!counts[att.employee_chapa]) {
+            counts[att.employee_chapa] = {
+              chapa: att.employee_chapa,
+              nome: employee.nome,
+              count: 0
+            };
+          }
+          counts[att.employee_chapa].count++;
+        }
+      }
+    });
+
+    // Ordenar e pegar top N
+    return Object.values(counts)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit);
+  };
+
+  const recordistasFaltas = calculateRecordistas('FALTA');
+  const recordistasAtestados = calculateRecordistas('ATE');
+  const recordistasFolgas = calculateRecordistas('FO');
+
   const EmployeeTable = ({ employees, title, icon: Icon }) => (
     <div>
       <div className="flex items-center mb-4">
