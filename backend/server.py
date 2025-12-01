@@ -168,6 +168,101 @@ async def login(credentials: UserLogin):
 @api_router.get("/auth/me", response_model=User)
 async def get_me(current_user: dict = Depends(get_current_user)):
     """Get current user information"""
+
+
+# ============ COMPANY REGISTRATION (PUBLIC) ============
+
+class CompanyRegistration(BaseModel):
+    company_name: str
+    company_code: str
+    admin_name: str
+    admin_email: str
+    admin_password: str
+
+@api_router.post("/register/company")
+async def register_company(registration: CompanyRegistration):
+    """
+    Public endpoint for company self-registration
+    Creates company + admin user with 30 days free trial
+    """
+    
+    # Verificar se código já existe
+    existing = await db.companies.find_one({"company_code": registration.company_code.upper()})
+    if existing:
+        raise HTTPException(status_code=409, detail="Company code already in use")
+    
+    # Verificar se email já existe
+    existing_user = await db.users.find_one({"email": registration.admin_email})
+    if existing_user:
+        raise HTTPException(status_code=409, detail="Email already registered")
+    
+    # Calcular data de expiração (30 dias)
+    trial_expires = datetime.now(timezone.utc) + timedelta(days=30)
+    
+    # Criar empresa
+    company_id = str(uuid4())
+    company = {
+        "id": company_id,
+        "name": registration.company_name,
+        "company_code": registration.company_code.upper(),
+        "logo_url": None,
+        "active": True,
+        "subscription_type": "trial",
+        "subscription_expires_at": trial_expires.isoformat(),
+        "mercado_pago_customer_id": None,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.companies.insert_one(company)
+    
+    # Criar usuário admin
+    hashed_password = bcrypt.hashpw(
+        registration.admin_password.encode('utf-8'), 
+        bcrypt.gensalt()
+    ).decode('utf-8')
+    
+    user = {
+        "id": str(uuid4()),
+        "email": registration.admin_email,
+        "password": hashed_password,
+        "name": registration.admin_name,
+        "role": "company_admin",
+        "company_id": company_id,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.users.insert_one(user)
+    
+    # Criar turnos padrão para a empresa
+    default_shifts = [
+        {
+            "id": str(uuid4()),
+            "name": "Turno Diurno",
+            "start_time": "07:00",
+            "end_time": "16:00",
+            "company_id": company_id,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid4()),
+            "name": "Turno Noturno",
+            "start_time": "19:00",
+            "end_time": "04:00",
+            "company_id": company_id,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+    ]
+    
+    await db.shifts.insert_many(default_shifts)
+    
+    return {
+        "message": "Company registered successfully",
+        "company_id": company_id,
+        "company_code": registration.company_code.upper(),
+        "trial_expires_at": trial_expires.isoformat(),
+        "admin_email": registration.admin_email
+    }
+
     if isinstance(current_user['created_at'], str):
         current_user['created_at'] = datetime.fromisoformat(current_user['created_at'])
     return User(**{k: v for k, v in current_user.items() if k != 'password'})
