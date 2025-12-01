@@ -199,11 +199,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "CSV import endpoint created. Logic: if BATIDA exists → P (DIA) or PN (NOITE) based on employee turno, if no BATIDA → FALTA. Needs testing with real CSV file."
+      - working: true
+        agent: "testing"
+        comment: "CSV import tested successfully. Logic working correctly: employees with BATIDA get P (DIA turno) or PN (NOITE turno), employees without BATIDA get FALTA status. Import processes existing records by updating them if they already exist for the same date."
   
   - task: "Attendance Management"
     implemented: true
