@@ -9,8 +9,12 @@ import { toast } from "sonner";
 import { Users, Lock } from "lucide-react";
 
 function Login({ onLogin }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    company_code: "",
+  });
+  const [showCompanyCode, setShowCompanyCode] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
