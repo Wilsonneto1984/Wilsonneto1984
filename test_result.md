@@ -224,17 +224,17 @@ backend:
         comment: "Attendance management tested successfully. Can create attendance records, update status (FALTA to FO), list by date and employee. All CRUD operations working correctly."
 
 frontend:
-  - task: "Frontend implementation"
-    implemented: false
-    working: "NA"
-    file: "NA"
+  - task: "Frontend implementation - Employee Management"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/dashboard/EmployeesTab.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-      - working: "NA"
+      - working: true
         agent: "main"
-        comment: "Not yet implemented. Will be done after backend testing."
+        comment: "Implemented employee management UI with all fields (chapa, nome, funcao, turno, grupo, mo, admissao, sindicato). Includes CSV import interface, tabs for DIA/NOITE/Desmobilizados, search functionality, and proper role-based permissions (viewers can reactivate employees)."
 
 metadata:
   created_by: "main_agent"
