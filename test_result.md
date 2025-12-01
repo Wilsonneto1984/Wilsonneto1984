@@ -254,6 +254,65 @@ frontend:
         agent: "testing"
         comment: "COMPREHENSIVE TESTING COMPLETED ✅ All 3 test scenarios passed: 1) Super Admin dashboard shows NO 'Visualizar Pública' button - only 'Sair' button visible ✅ 2) Super Admin accessing '/' directly gets redirected to '/dashboard' automatically ✅ 3) Company Admin dashboard shows 'Visualizar Pública' button correctly ✅ Bug fix verified working perfectly. Screenshots captured for all scenarios."
 
+  - task: "Public Access via Direct Link (no password)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/PublicView.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented public access route /public/:company_code that bypasses authentication. PublicView component gets company_code from URL params and calls public API endpoints. Route configured in App.js lines 78-82."
+
+  - task: "Invalid Company Code Handling"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/PublicView.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Error handling implemented in PublicView.js lines 67-81. Shows error message for invalid company codes and provides button to go to administrative area."
+
+  - task: "Company Admin Public View Button"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Dashboard.js lines 89-93 shows 'Visualizar Pública' button for Company Admins that opens /public/{company_code} in new tab. Button only visible for non-super-admin users."
+
+  - task: "Root Route Redirect to Login"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "App.js lines 84-88 implements root route '/' redirect to '/login' using Navigate component."
+
+  - task: "Multi-company Data Isolation"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Backend public endpoints (lines 1016-1068) verify company_code and filter data by company_id to ensure proper isolation between companies."
 metadata:
   created_by: "main_agent"
   version: "1.0"
