@@ -1,0 +1,249 @@
+{
+  "database": "efetivo_db",
+  "description": "Dados iniciais para o Sistema de Controle de Efetivo",
+  "version": "1.0",
+  "indexes": {
+    "companies": [
+      { "keys": { "company_code": 1 }, "unique": true },
+      { "keys": { "name": 1 } }
+    ],
+    "users": [
+      { "keys": { "email": 1, "company_id": 1 }, "unique": true },
+      { "keys": { "role": 1 } }
+    ],
+    "employees": [
+      { "keys": { "company_id": 1, "chapa": 1 }, "unique": true },
+      { "keys": { "company_id": 1, "active": 1 } },
+      { "keys": { "company_id": 1, "turno": 1 } }
+    ],
+    "attendance": [
+      { "keys": { "company_id": 1, "date": 1, "employee_chapa": 1 }, "unique": true },
+      { "keys": { "company_id": 1, "date": 1 } },
+      { "keys": { "company_id": 1, "employee_chapa": 1 } }
+    ],
+    "shifts": [
+      { "keys": { "company_id": 1, "name": 1 }, "unique": true }
+    ]
+  },
+  "collections": {
+    "companies": [
+      {
+        "id": "company-revap-001",
+        "name": "REVAP - Refinaria do Vale do Paraíba",
+        "company_code": "REVAP2024",
+        "logo_url": null,
+        "active": true,
+        "subscription_type": "annual",
+        "subscription_expires_at": "2025-12-31T23:59:59Z",
+        "mercado_pago_customer_id": null,
+        "created_at": "2024-01-01T00:00:00Z"
+      },
+      {
+        "id": "company-petro-001",
+        "name": "PETROBRAS - Petróleo Brasileiro S.A.",
+        "company_code": "PETRO2024",
+        "logo_url": null,
+        "active": true,
+        "subscription_type": "monthly",
+        "subscription_expires_at": "2025-01-31T23:59:59Z",
+        "mercado_pago_customer_id": null,
+        "created_at": "2024-01-01T00:00:00Z"
+      }
+    ],
+    "users": [
+      {
+        "id": "user-superadmin-001",
+        "email": "admin@system.com",
+        "password": "$2b$12$HASH_BCRYPT_AQUI",
+        "name": "Administrador do Sistema",
+        "role": "super_admin",
+        "company_id": null,
+        "created_at": "2024-01-01T00:00:00Z",
+        "_comment": "Senha: admin123"
+      },
+      {
+        "id": "user-revap-admin-001",
+        "email": "admin@revap.com",
+        "password": "$2b$12$HASH_BCRYPT_AQUI",
+        "name": "Administrador REVAP",
+        "role": "company_admin",
+        "company_id": "company-revap-001",
+        "created_at": "2024-01-01T00:00:00Z",
+        "_comment": "Senha: revap123"
+      },
+      {
+        "id": "user-revap-viewer-001",
+        "email": "viewer@revap.com",
+        "password": "$2b$12$HASH_BCRYPT_AQUI",
+        "name": "Visualizador REVAP",
+        "role": "company_viewer",
+        "company_id": "company-revap-001",
+        "created_at": "2024-01-01T00:00:00Z",
+        "_comment": "Senha: viewer123"
+      },
+      {
+        "id": "user-petro-admin-001",
+        "email": "admin@petrobras.com",
+        "password": "$2b$12$HASH_BCRYPT_AQUI",
+        "name": "Administrador Petrobras",
+        "role": "company_admin",
+        "company_id": "company-petro-001",
+        "created_at": "2024-01-01T00:00:00Z",
+        "_comment": "Senha: petro123"
+      }
+    ],
+    "employees": [
+      {
+        "id": "emp-revap-001",
+        "chapa": "80001",
+        "nome": "João Silva Santos",
+        "funcao": "Soldador",
+        "turno": "DIA",
+        "grupo": "1",
+        "mo": "M.O.D",
+        "admissao": "2024-01-15",
+        "sindicato": "1",
+        "primeiro_acesso": "2024-01-20",
+        "active": true,
+        "company_id": "company-revap-001",
+        "created_at": "2024-01-15T00:00:00Z"
+      },
+      {
+        "id": "emp-revap-002",
+        "chapa": "80002",
+        "nome": "Maria Oliveira Costa",
+        "funcao": "Encanadora",
+        "turno": "DIA",
+        "grupo": "2",
+        "mo": "M.O.I",
+        "admissao": "2024-02-10",
+        "sindicato": "1",
+        "primeiro_acesso": "2024-02-15",
+        "active": true,
+        "company_id": "company-revap-001",
+        "created_at": "2024-02-10T00:00:00Z"
+      },
+      {
+        "id": "emp-revap-003",
+        "chapa": "80003",
+        "nome": "Pedro Almeida Rocha",
+        "funcao": "Mecânico",
+        "turno": "NOITE",
+        "grupo": "1",
+        "mo": "M.O.D",
+        "admissao": "2024-03-05",
+        "sindicato": "1",
+        "primeiro_acesso": "2024-03-10",
+        "active": true,
+        "company_id": "company-revap-001",
+        "created_at": "2024-03-05T00:00:00Z"
+      },
+      {
+        "id": "emp-revap-004",
+        "chapa": "80004",
+        "nome": "Ana Paula Ferreira",
+        "funcao": "Eletricista",
+        "turno": "NOITE",
+        "grupo": "2",
+        "mo": "M.O.I",
+        "admissao": "2024-04-01",
+        "sindicato": "1",
+        "primeiro_acesso": "2024-04-05",
+        "active": true,
+        "company_id": "company-revap-001",
+        "created_at": "2024-04-01T00:00:00Z"
+      },
+      {
+        "id": "emp-revap-005",
+        "chapa": "80005",
+        "nome": "Carlos Eduardo Lima",
+        "funcao": "Supervisor",
+        "turno": "DIA",
+        "grupo": "3",
+        "mo": "M.O.I",
+        "admissao": "2023-12-01",
+        "sindicato": "1",
+        "primeiro_acesso": "2023-12-05",
+        "active": true,
+        "company_id": "company-revap-001",
+        "created_at": "2023-12-01T00:00:00Z"
+      },
+      {
+        "id": "emp-petro-001",
+        "chapa": "90001",
+        "nome": "Carlos Petrobras Santos",
+        "funcao": "Engenheiro",
+        "turno": "DIA",
+        "grupo": "1",
+        "mo": "M.O.D",
+        "admissao": "2024-01-10",
+        "sindicato": "1",
+        "primeiro_acesso": "2024-01-15",
+        "active": true,
+        "company_id": "company-petro-001",
+        "created_at": "2024-01-10T00:00:00Z"
+      }
+    ],
+    "shifts": [
+      {
+        "id": "shift-revap-dia",
+        "name": "Turno Diurno",
+        "start_time": "07:00",
+        "end_time": "16:00",
+        "company_id": "company-revap-001",
+        "created_at": "2024-01-01T00:00:00Z"
+      },
+      {
+        "id": "shift-revap-noite",
+        "name": "Turno Noturno",
+        "start_time": "19:00",
+        "end_time": "04:00",
+        "company_id": "company-revap-001",
+        "created_at": "2024-01-01T00:00:00Z"
+      },
+      {
+        "id": "shift-petro-dia",
+        "name": "Turno Diurno",
+        "start_time": "08:00",
+        "end_time": "17:00",
+        "company_id": "company-petro-001",
+        "created_at": "2024-01-01T00:00:00Z"
+      }
+    ],
+    "attendance": []
+  },
+  "credentials": {
+    "super_admin": {
+      "email": "admin@system.com",
+      "password": "admin123",
+      "description": "Gestor da Plataforma - Gerencia todas as empresas"
+    },
+    "revap": {
+      "company_code": "REVAP2024",
+      "admin": {
+        "email": "admin@revap.com",
+        "password": "revap123"
+      },
+      "viewer": {
+        "email": "viewer@revap.com",
+        "password": "viewer123"
+      },
+      "public_url": "/public/REVAP2024"
+    },
+    "petrobras": {
+      "company_code": "PETRO2024",
+      "admin": {
+        "email": "admin@petrobras.com",
+        "password": "petro123"
+      },
+      "public_url": "/public/PETRO2024"
+    }
+  },
+  "notes": [
+    "Este arquivo contém a estrutura de dados inicial do sistema",
+    "As senhas nos objetos JSON são placeholders - use o script Python para gerar hashes reais",
+    "Os IDs podem ser substituídos por UUIDs gerados automaticamente",
+    "Sempre use UTC para timestamps",
+    "O campo company_id garante o isolamento multi-tenant"
+  ]
+}
