@@ -1069,7 +1069,7 @@ async def get_public_attendance(
 
 
 @api_router.get("/public/export/excel")
-async def export_public_excel(company_code: str, date: str):
+async def export_public_excel(company_code: str, date: str, turno: Optional[str] = None):
     """Export public view to Excel"""
     try:
         import openpyxl
@@ -1095,8 +1095,16 @@ async def export_public_excel(company_code: str, date: str):
         header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
         header_font = Font(bold=True, color="FFFFFF")
         
+        # Definir quais turnos exportar baseado no filtro
+        if turno:
+            # Exportar apenas o turno específico
+            turnos_to_export = [turno]
+        else:
+            # Exportar ambos os turnos (comportamento padrão)
+            turnos_to_export = ["DIA", "NOITE"]
+        
         # Criar aba para cada turno
-        for turno in ["DIA", "NOITE"]:
+        for turno_atual in turnos_to_export:
             ws = wb.create_sheet(title=f"BASE {turno}")
             
             # Cabeçalhos
