@@ -37,6 +37,12 @@ function PublicView() {
   }, [selectedDate, companyCode]);
 
   const fetchData = async () => {
+    if (!companyCode) {
+      setShowCodeInput(true);
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     try {
       // Calcular data 30 dias atrás
@@ -45,23 +51,40 @@ function PublicView() {
       startDate.setDate(startDate.getDate() - 30);
       const startDateStr = startDate.toISOString().split('T')[0];
       
-      // Buscar colaboradores ativos e presença do período (últimos 30 dias)
+      // Buscar colaboradores ativos e presença do período usando endpoints públicos
       const [employeesRes, attendanceRes] = await Promise.all([
-        axios.get(`${API}/employees?active_only=true`),
-        axios.get(`${API}/attendance?start_date=${startDateStr}&end_date=${endDate}`)
+        axios.get(`${API}/public/employees?company_code=${companyCode}`),
+        axios.get(`${API}/public/attendance?company_code=${companyCode}&start_date=${startDateStr}&end_date=${endDate}`)
       ]);
       
       setEmployees(employeesRes.data);
       setAttendance(attendanceRes.data);
+      setShowCodeInput(false);
+      localStorage.setItem('public_company_code', companyCode);
     } catch (error) {
       console.error('Error fetching data:', error);
-      // Se falhar sem autenticação, ainda funciona (API pública)
-      if (error.response?.status !== 401) {
+      if (error.response?.status === 404) {
+        toast.error("Código da empresa inválido");
+        setShowCodeInput(true);
+      } else if (error.response?.status === 403) {
+        toast.error("Empresa inativa");
+      } else {
         toast.error("Erro ao carregar dados");
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCodeSubmit = (e) => {
+    e.preventDefault();
+    fetchData();
+  };
+
+  const handleChangeCompany = () => {
+    setShowCodeInput(true);
+    setCompanyCode('');
+    localStorage.removeItem('public_company_code');
   };
 
   // Combinar dados de colaboradores com presença DO DIA SELECIONADO
