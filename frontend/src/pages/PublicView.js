@@ -310,15 +310,24 @@ function PublicView() {
                 <p className="text-sm text-gray-600 mt-1">Visualização Pública - Gestão de Presença</p>
               </div>
             </div>
-            <Button 
-              onClick={() => navigate('/login')} 
-              variant="default"
-              size="lg"
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <LogIn className="w-4 h-4 mr-2" />
-              Área Administrativa
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button 
+                onClick={handleChangeCompany} 
+                variant="outline"
+                size="lg"
+              >
+                Trocar Empresa
+              </Button>
+              <Button 
+                onClick={() => navigate('/login')} 
+                variant="default"
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Área Administrativa
+              </Button>
+            </div>
           </div>
         </div>
       </div>
