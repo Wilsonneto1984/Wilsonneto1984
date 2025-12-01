@@ -341,7 +341,16 @@ function CompaniesTab({ companies, onRefresh }) {
                         <Button
                           size="sm"
                           variant="outline"
+                          onClick={() => handleViewUsers(company)}
+                          title="Ver usuários"
+                        >
+                          <UserPlus className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
                           onClick={() => handleOpenDialog(company)}
+                          title="Editar"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
