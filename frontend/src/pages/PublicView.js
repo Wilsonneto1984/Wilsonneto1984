@@ -223,6 +223,67 @@ function PublicView() {
     </div>
   );
 
+  // Tela de entrada de código
+  if (showCodeInput) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-2xl">
+          <CardHeader className="text-center">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-4 rounded-xl mx-auto w-16 h-16 flex items-center justify-center mb-4">
+              <Building2 className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl">Visualização Pública</CardTitle>
+            <CardDescription className="text-base mt-2">
+              Digite o código da empresa para acessar o efetivo
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleCodeSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Código da Empresa</label>
+                <Input
+                  type="text"
+                  placeholder="Ex: REVAP2024"
+                  value={companyCode}
+                  onChange={(e) => setCompanyCode(e.target.value.toUpperCase())}
+                  className="text-lg h-12"
+                  required
+                  autoFocus
+                />
+                <p className="text-xs text-gray-500">
+                  Solicite o código com o administrador da sua empresa
+                </p>
+              </div>
+              
+              <Button type="submit" className="w-full h-12 text-base" disabled={!companyCode || loading}>
+                {loading ? 'Carregando...' : 'Acessar Efetivo'}
+              </Button>
+              
+              <div className="pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/login')}
+                  className="w-full"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Área Administrativa
+                </Button>
+              </div>
+            </form>
+            
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm font-medium text-blue-900 mb-2">Código de Teste:</p>
+              <p className="text-sm text-blue-700">
+                Empresa REVAP: <strong>REVAP2024</strong>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
