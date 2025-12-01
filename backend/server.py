@@ -29,13 +29,18 @@ from models import (
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
+# MongoDB connection - Fail explicitly if not configured
 mongo_url = os.environ['MONGO_URL']
+db_name = os.environ.get('DB_NAME')
+if not db_name:
+    raise ValueError("DB_NAME must be set in environment variables")
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'employee_management_system')]
+db = client[db_name]
 
-# JWT Configuration
-SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'your-secret-key-change-in-production')
+# JWT Configuration - Fail explicitly if not set
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("JWT_SECRET_KEY must be set in environment variables")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
