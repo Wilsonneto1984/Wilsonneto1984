@@ -22,7 +22,11 @@ function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/login`, { email, password });
+      const response = await axios.post(`${API}/auth/login`, { 
+        email: formData.email, 
+        password: formData.password,
+        company_code: formData.company_code 
+      });
       toast.success("Login realizado com sucesso!");
       onLogin(response.data.access_token, response.data.user);
     } catch (error) {
