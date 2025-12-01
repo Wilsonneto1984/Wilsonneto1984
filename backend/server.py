@@ -12,6 +12,7 @@ import os
 import logging
 from typing import List, Optional, Literal
 from datetime import datetime, timezone, timedelta
+from uuid import uuid4
 import bcrypt
 import jwt
 import csv
