@@ -21,8 +21,8 @@ const statusConfig = {
 };
 
 function PublicView() {
-  const [summary, setSummary] = useState(null);
-  const [shifts, setShifts] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -35,30 +35,72 @@ function PublicView() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [summaryRes, shiftsRes] = await Promise.all([
-        axios.get(`${API}/attendance/summary?date=${selectedDate}`),
-        axios.get(`${API}/shifts`)
+      // Buscar colaboradores ativos e presença do dia
+      const [employeesRes, attendanceRes] = await Promise.all([
+        axios.get(`${API}/employees?active_only=true`),
+        axios.get(`${API}/attendance?date=${selectedDate}`)
       ]);
-      setSummary(summaryRes.data);
-      setShifts(shiftsRes.data);
+      
+      setEmployees(employeesRes.data);
+      setAttendance(attendanceRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast.error("Erro ao carregar dados");
+      // Se falhar sem autenticação, ainda funciona (API pública)
+      if (error.response?.status !== 401) {
+        toast.error("Erro ao carregar dados");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const getShiftName = (shiftId) => {
-    const shift = shifts.find(s => s.id === shiftId);
-    return shift ? `${shift.name} (${shift.start_time} - ${shift.end_time})` : "Sem turno";
+  // Combinar dados de colaboradores com presença
+  const employeesWithAttendance = employees.map(emp => {
+    const attendanceRecord = attendance.find(a => a.employee_chapa === emp.chapa);
+    return {
+      ...emp,
+      attendance_status: attendanceRecord?.status || 'not_registered',
+      hora_batida: attendanceRecord?.hora_batida || null
+    };
+  });
+
+  const filteredEmployees = employeesWithAttendance.filter(emp =>
+    emp.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    emp.chapa?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    emp.funcao?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Separar por turno
+  const diaEmployees = filteredEmployees.filter(e => e.turno === 'DIA');
+  const noiteEmployees = filteredEmployees.filter(e => e.turno === 'NOITE');
+
+  // Calcular estatísticas
+  const calculateStats = (empList) => {
+    const total = empList.length;
+    const presente = empList.filter(e => e.attendance_status === 'P' || e.attendance_status === 'PN').length;
+    const falta = empList.filter(e => e.attendance_status === 'FALTA').length;
+    const folga = empList.filter(e => e.attendance_status === 'FO').length;
+    const atestado = empList.filter(e => e.attendance_status === 'ATE').length;
+    const naoRegistrado = empList.filter(e => e.attendance_status === 'not_registered').length;
+    
+    return { total, presente, falta, folga, atestado, naoRegistrado };
   };
 
-  const filteredEmployees = summary?.employees.filter(emp =>
-    emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.employee_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.position.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const statsAll = calculateStats(filteredEmployees);
+  const statsDia = calculateStats(diaEmployees);
+  const statsNoite = calculateStats(noiteEmployees);
+
+  // Estatísticas por M.O
+  const modStats = {
+    dia: {
+      mod: calculateStats(diaEmployees.filter(e => e.mo === 'M.O.D')),
+      moi: calculateStats(diaEmployees.filter(e => e.mo === 'M.O.I'))
+    },
+    noite: {
+      mod: calculateStats(noiteEmployees.filter(e => e.mo === 'M.O.D')),
+      moi: calculateStats(noiteEmployees.filter(e => e.mo === 'M.O.I'))
+    }
+  };
 
   if (loading) {
     return (
