@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Users, Calendar, Search, LogIn, RefreshCw, Sun, Moon, Building2, TrendingUp, Upload, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const statusConfig = {
   P: { label: "Presente", color: "bg-green-500", textColor: "text-green-700", bgColor: "bg-green-50" },
