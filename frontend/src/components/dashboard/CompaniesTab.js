@@ -458,6 +458,46 @@ function CompaniesTab({ companies, onRefresh }) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialog de Usuários */}
+      <Dialog open={usersDialogOpen} onOpenChange={setUsersDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Usuários Cadastrados</DialogTitle>
+            <DialogDescription>
+              Usuários com acesso a esta empresa
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            {selectedCompanyUsers.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">Nenhum usuário cadastrado</p>
+            ) : (
+              selectedCompanyUsers.map((user) => (
+                <Card key={user.id}>
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-blue-100 p-2 rounded-full">
+                          <Users className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{user.name}</p>
+                          <p className="text-sm text-gray-600">{user.email}</p>
+                        </div>
+                      </div>
+                      <Badge variant={
+                        user.role === 'company_admin' ? 'default' : 'outline'
+                      }>
+                        {user.role === 'company_admin' ? 'Administrador' : 'Visualizador'}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
