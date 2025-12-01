@@ -9,43 +9,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { UserPlus, Edit, Trash2, Search } from "lucide-react";
+import { UserPlus, Edit, Trash2, Search, UserMinus, UserCheck, Upload } from "lucide-react";
 
 function EmployeesTab({ employees, shifts, onRefresh }) {
   const [open, setOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [csvFile, setCsvFile] = useState(null);
+  const [csvDate, setCsvDate] = useState(new Date().toISOString().split('T')[0]);
+  const [uploadingCSV, setUploadingCSV] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    employee_id: "",
-    position: "",
-    shift_id: "",
-    phone: "",
-    email: ""
+    chapa: "",
+    nome: "",
+    funcao: "",
+    turno: "DIA",
+    grupo: "",
+    mo: "M.O.D",
+    admissao: "",
+    sindicato: "",
+    primeiro_acesso: ""
   });
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("dia");
 
   const handleOpenDialog = (employee = null) => {
     if (employee) {
       setEditingEmployee(employee);
       setFormData({
-        name: employee.name,
-        employee_id: employee.employee_id,
-        position: employee.position,
-        shift_id: employee.shift_id || "",
-        phone: employee.phone || "",
-        email: employee.email || ""
+        chapa: employee.chapa,
+        nome: employee.nome,
+        funcao: employee.funcao,
+        turno: employee.turno,
+        grupo: employee.grupo,
+        mo: employee.mo,
+        admissao: employee.admissao || "",
+        sindicato: employee.sindicato || "",
+        primeiro_acesso: employee.primeiro_acesso || ""
       });
     } else {
       setEditingEmployee(null);
       setFormData({
-        name: "",
-        employee_id: "",
-        position: "",
-        shift_id: "",
-        phone: "",
-        email: ""
+        chapa: "",
+        nome: "",
+        funcao: "",
+        turno: "DIA",
+        grupo: "",
+        mo: "M.O.D",
+        admissao: "",
+        sindicato: "",
+        primeiro_acesso: ""
       });
     }
     setOpen(true);
@@ -57,46 +71,88 @@ function EmployeesTab({ employees, shifts, onRefresh }) {
 
     try {
       if (editingEmployee) {
-        await axios.put(`${API}/employees/${editingEmployee.id}`, formData);
-        toast.success("Funcionário atualizado com sucesso!");
+        await axios.put(`${API}/employees/${editingEmployee.chapa}`, formData);
+        toast.success("Colaborador atualizado com sucesso!");
       } else {
         await axios.post(`${API}/employees`, formData);
-        toast.success("Funcionário criado com sucesso!");
+        toast.success("Colaborador criado com sucesso!");
       }
       setOpen(false);
       onRefresh();
     } catch (error) {
       console.error('Error saving employee:', error);
-      toast.error(error.response?.data?.detail || "Erro ao salvar funcionário");
+      toast.error(error.response?.data?.detail || "Erro ao salvar colaborador");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (employee) => {
-    if (!window.confirm(`Deseja realmente desativar ${employee.name}?`)) {
+  const handleDeactivate = async (employee) => {
+    if (!window.confirm(`Deseja realmente desmobilizar ${employee.nome}?`)) {
       return;
     }
 
     try {
-      await axios.delete(`${API}/employees/${employee.id}`);
-      toast.success("Funcionário desativado com sucesso!");
+      await axios.post(`${API}/employees/${employee.chapa}/deactivate`);
+      toast.success("Colaborador desmobilizado com sucesso!");
       onRefresh();
     } catch (error) {
-      console.error('Error deleting employee:', error);
-      toast.error("Erro ao desativar funcionário");
+      console.error('Error deactivating employee:', error);
+      toast.error("Erro ao desmobilizar colaborador");
     }
   };
 
-  const getShiftName = (shiftId) => {
-    const shift = shifts.find(s => s.id === shiftId);
-    return shift ? shift.name : "Sem turno";
+  const handleReactivate = async (employee) => {
+    if (!window.confirm(`Deseja realmente reativar ${employee.nome}?`)) {
+      return;
+    }
+
+    try {
+      await axios.post(`${API}/employees/${employee.chapa}/reactivate`);
+      toast.success("Colaborador reativado com sucesso!");
+      onRefresh();
+    } catch (error) {
+      console.error('Error reactivating employee:', error);
+      toast.error("Erro ao reativar colaborador");
+    }
+  };
+
+  const handleCSVUpload = async () => {
+    if (!csvFile) {
+      toast.error("Selecione um arquivo CSV");
+      return;
+    }
+
+    setUploadingCSV(true);
+    const formData = new FormData();
+    formData.append('file', csvFile);
+    formData.append('date', csvDate);
+
+    try {
+      const response = await axios.post(`${API}/import/csv`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      toast.success(`CSV importado! Processados: ${response.data.processed}, Criados: ${response.data.created}, Atualizados: ${response.data.updated}`);
+      if (response.data.errors.length > 0) {
+        console.log('Import errors:', response.data.errors);
+      }
+      setCsvFile(null);
+      onRefresh();
+    } catch (error) {
+      console.error('Error uploading CSV:', error);
+      toast.error(error.response?.data?.detail || "Erro ao importar CSV");
+    } finally {
+      setUploadingCSV(false);
+    }
   };
 
   const filteredEmployees = employees.filter(emp =>
-    emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.employee_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.position.toLowerCase().includes(searchTerm.toLowerCase())
+    (emp.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    emp.chapa?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    emp.funcao?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
