@@ -20,6 +20,8 @@ function EmployeesTab({ employees, onRefresh, user }) {
   const [csvFile, setCsvFile] = useState(null);
   const [csvDate, setCsvDate] = useState(new Date().toISOString().split('T')[0]);
   const [uploadingCSV, setUploadingCSV] = useState(false);
+  const [employeeCsvFile, setEmployeeCsvFile] = useState(null);
+  const [uploadingEmployeeCSV, setUploadingEmployeeCSV] = useState(false);
   const [formData, setFormData] = useState({
     chapa: "",
     nome: "",
@@ -152,6 +154,39 @@ function EmployeesTab({ employees, onRefresh, user }) {
     }
   };
 
+  const handleEmployeeCSVUpload = async () => {
+    if (!employeeCsvFile) {
+      toast.error("Selecione um arquivo CSV");
+      return;
+    }
+
+    setUploadingEmployeeCSV(true);
+    const formDataUpload = new FormData();
+    formDataUpload.append('file', employeeCsvFile);
+
+    try {
+      const response = await axios.post(`${API}/import/employees/csv`, formDataUpload, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      toast.success(`Funcionários importados! Total: ${response.data.created} criados, ${response.data.updated} atualizados`);
+      if (response.data.errors && response.data.errors.length > 0) {
+        console.log('Import errors:', response.data.errors);
+        toast.warning(`${response.data.errors.length} avisos durante importação`);
+      }
+      setEmployeeCsvFile(null);
+      document.getElementById('employee-csv-file').value = '';
+      onRefresh();
+    } catch (error) {
+      console.error('Error uploading employee CSV:', error);
+      toast.error(error.response?.data?.detail || "Erro ao importar CSV de funcionários");
+    } finally {
+      setUploadingEmployeeCSV(false);
+    }
+  };
+
   const filteredEmployees = employees.filter(emp =>
     (emp.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     emp.chapa?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -253,7 +288,50 @@ function EmployeesTab({ employees, onRefresh, user }) {
 
   return (
     <div className="space-y-6">
-      {/* CSV Import Card */}
+      {/* CSV Import Card - Employee Registration */}
+      {!isViewer && (
+        <Card className="border-blue-200 bg-blue-50/30">
+          <CardHeader>
+            <CardTitle className="text-blue-900">Importar Cadastro de Funcionários via CSV</CardTitle>
+            <CardDescription>
+              <strong>Formato do CSV:</strong> chapa, nome, funcao, data_admissao
+              <br />
+              <span className="text-xs text-gray-600 mt-1 block">
+                • <strong>Valores padrão:</strong> turno=DIA, sindicato=1, grupo=vazio, mo=vazio, primeiro_acesso=vazio
+                <br />
+                • Após importação, edite os campos conforme necessário
+              </span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end gap-4">
+              <div className="flex-1">
+                <Label htmlFor="employee-csv-file">Arquivo CSV de Funcionários</Label>
+                <Input
+                  id="employee-csv-file"
+                  type="file"
+                  accept=".csv"
+                  onChange={(e) => setEmployeeCsvFile(e.target.files[0])}
+                  className="mt-1 bg-white"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Exemplo: 80001,João Silva,Soldador,2024-01-15
+                </p>
+              </div>
+              <Button
+                onClick={handleEmployeeCSVUpload}
+                disabled={!employeeCsvFile || uploadingEmployeeCSV}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {uploadingEmployeeCSV ? 'Importando...' : 'Importar Funcionários'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {/* CSV Import Card - Attendance */}
       {!isViewer && (
         <Card>
           <CardHeader>
