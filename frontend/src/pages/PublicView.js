@@ -102,12 +102,67 @@ function PublicView() {
     }
   };
 
+  const EmployeeTable = ({ employees, title, icon: Icon }) => (
+    <div>
+      <div className="flex items-center mb-4">
+        <Icon className="w-5 h-5 mr-2 text-blue-600" />
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <Badge variant="outline" className="ml-2">{employees.length}</Badge>
+      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Chapa</TableHead>
+            <TableHead>Nome</TableHead>
+            <TableHead>Função</TableHead>
+            <TableHead>Grupo</TableHead>
+            <TableHead>M.O</TableHead>
+            <TableHead>Hora</TableHead>
+            <TableHead>Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {employees.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center text-gray-500 py-8">
+                Nenhum colaborador encontrado
+              </TableCell>
+            </TableRow>
+          ) : (
+            employees.map((employee) => {
+              const status = statusConfig[employee.attendance_status] || statusConfig.not_registered;
+              return (
+                <TableRow key={employee.id}>
+                  <TableCell className="font-medium">{employee.chapa}</TableCell>
+                  <TableCell>{employee.nome}</TableCell>
+                  <TableCell className="text-sm">{employee.funcao}</TableCell>
+                  <TableCell>{employee.grupo}</TableCell>
+                  <TableCell>
+                    <Badge variant={employee.mo === 'M.O.D' ? 'default' : 'outline'} className="text-xs">
+                      {employee.mo}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">{employee.hora_batida || '-'}</TableCell>
+                  <TableCell>
+                    <Badge className={`${status.color} text-white text-xs`}>
+                      {status.label}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando efetivo...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-lg font-medium text-gray-700">Carregando efetivo...</p>
         </div>
       </div>
     );
@@ -116,22 +171,23 @@ function PublicView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
-      <div className="bg-white border-b shadow-sm">
+      <div className="bg-white border-b shadow-md">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center space-x-3">
-              <div className="bg-blue-600 p-3 rounded-lg">
-                <Users className="w-6 h-6 text-white" />
+            <div className="flex items-center space-x-4">
+              <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-3 rounded-xl shadow-lg">
+                <Building2 className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Controle de Efetivo</h1>
-                <p className="text-sm text-gray-600">Visualização Pública</p>
+                <h1 className="text-3xl font-bold text-gray-900">Controle de Efetivo</h1>
+                <p className="text-sm text-gray-600 mt-1">Visualização Pública - Gestão de Presença</p>
               </div>
             </div>
             <Button 
               onClick={() => navigate('/login')} 
-              variant="outline"
-              data-testid="go-to-login-button"
+              variant="default"
+              size="lg"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               <LogIn className="w-4 h-4 mr-2" />
               Área Administrativa
@@ -141,133 +197,171 @@ function PublicView() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Date Selector and Stats */}
-        <div className="mb-8">
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <CardTitle className="flex items-center">
-                    <Calendar className="w-5 h-5 mr-2" />
-                    Resumo do Efetivo
-                  </CardTitle>
-                  <CardDescription>Data: {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR')}</CardDescription>
+        {/* Date Selector */}
+        <Card className="mb-8 shadow-lg">
+          <CardHeader>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <CardTitle className="flex items-center text-2xl">
+                  <Calendar className="w-6 h-6 mr-3 text-blue-600" />
+                  Resumo do Efetivo
+                </CardTitle>
+                <CardDescription className="text-base mt-2">
+                  Data: {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </CardDescription>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-auto"
+                />
+                <Button onClick={fetchData} variant="outline" size="icon">
+                  <RefreshCw className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {/* Stats Geral */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+              <div className="text-center p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl shadow">
+                <p className="text-3xl font-bold text-gray-900">{statsAll.total}</p>
+                <p className="text-sm font-medium text-gray-600 mt-1">Total</p>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-green-100 to-green-200 rounded-xl shadow">
+                <p className="text-3xl font-bold text-green-700">{statsAll.presente}</p>
+                <p className="text-sm font-medium text-green-800 mt-1">Presentes</p>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-red-100 to-red-200 rounded-xl shadow">
+                <p className="text-3xl font-bold text-red-700">{statsAll.falta}</p>
+                <p className="text-sm font-medium text-red-800 mt-1">Faltas</p>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl shadow">
+                <p className="text-3xl font-bold text-purple-700">{statsAll.folga}</p>
+                <p className="text-sm font-medium text-purple-800 mt-1">Folgas</p>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-xl shadow">
+                <p className="text-3xl font-bold text-yellow-700">{statsAll.atestado}</p>
+                <p className="text-sm font-medium text-yellow-800 mt-1">Atestados</p>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl shadow">
+                <p className="text-3xl font-bold text-gray-700">{statsAll.naoRegistrado}</p>
+                <p className="text-sm font-medium text-gray-800 mt-1">Não Reg.</p>
+              </div>
+            </div>
+
+            {/* Stats por Turno e M.O */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t">
+              {/* DIA */}
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <Sun className="w-5 h-5 text-orange-500 mr-2" />
+                  <h4 className="font-bold text-lg">Turno DIA</h4>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-auto"
-                    data-testid="date-selector-input"
-                  />
-                  <Button onClick={fetchData} variant="outline" size="icon" data-testid="refresh-data-button">
-                    <RefreshCw className="w-4 h-4" />
-                  </Button>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <p className="text-xs text-blue-600 font-medium">M.O.D</p>
+                    <p className="text-lg font-bold text-blue-900">
+                      {modStats.dia.mod.presente}/{modStats.dia.mod.total}
+                    </p>
+                  </div>
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <p className="text-xs text-blue-600 font-medium">M.O.I</p>
+                    <p className="text-lg font-bold text-blue-900">
+                      {modStats.dia.moi.presente}/{modStats.dia.moi.total}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-2xl font-bold text-gray-900">{summary?.total_employees || 0}</p>
-                  <p className="text-sm text-gray-600">Total</p>
+
+              {/* NOITE */}
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <Moon className="w-5 h-5 text-indigo-500 mr-2" />
+                  <h4 className="font-bold text-lg">Turno NOITE</h4>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600">{summary?.present || 0}</p>
-                  <p className="text-sm text-green-700">Presentes</p>
-                </div>
-                <div className="text-center p-4 bg-red-50 rounded-lg">
-                  <p className="text-2xl font-bold text-red-600">{summary?.absent || 0}</p>
-                  <p className="text-sm text-red-700">Faltas</p>
-                </div>
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <p className="text-2xl font-bold text-blue-600">{summary?.medical_leave || 0}</p>
-                  <p className="text-sm text-blue-700">Atestados</p>
-                </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <p className="text-2xl font-bold text-purple-600">{summary?.day_off || 0}</p>
-                  <p className="text-sm text-purple-700">Folgas</p>
-                </div>
-                <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                  <p className="text-2xl font-bold text-yellow-600">{summary?.vacation || 0}</p>
-                  <p className="text-sm text-yellow-700">Férias</p>
-                </div>
-                <div className="text-center p-4 bg-gray-100 rounded-lg">
-                  <p className="text-2xl font-bold text-gray-600">{summary?.not_registered || 0}</p>
-                  <p className="text-sm text-gray-700">Não Reg.</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
+                    <p className="text-xs text-indigo-600 font-medium">M.O.D</p>
+                    <p className="text-lg font-bold text-indigo-900">
+                      {modStats.noite.mod.presente}/{modStats.noite.mod.total}
+                    </p>
+                  </div>
+                  <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
+                    <p className="text-xs text-indigo-600 font-medium">M.O.I</p>
+                    <p className="text-lg font-bold text-indigo-900">
+                      {modStats.noite.moi.presente}/{modStats.noite.moi.total}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               type="text"
-              placeholder="Buscar por nome, matrícula ou cargo..."
+              placeholder="Buscar por nome, chapa ou função..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              data-testid="search-employee-input"
+              className="pl-12 h-12 text-lg shadow-md"
             />
           </div>
         </div>
 
-        {/* Employee List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredEmployees.map((employee) => {
-            const status = statusConfig[employee.status];
-            return (
-              <Card key={employee.id} className="hover:shadow-lg transition-shadow" data-testid="employee-card">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{employee.name}</CardTitle>
-                      <CardDescription className="text-xs">Matr: {employee.employee_id}</CardDescription>
-                    </div>
-                    <Badge className={`${status.color} text-white`}>
-                      {status.label}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <span className="font-medium mr-2">Cargo:</span>
-                    <span>{employee.position}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <span className="font-medium mr-2">Turno:</span>
-                    <span>{getShiftName(employee.shift_id)}</span>
-                  </div>
-                  {employee.notes && (
-                    <div className={`mt-3 p-2 rounded ${status.bgColor}`}>
-                      <p className={`text-xs ${status.textColor}`}>
-                        <strong>Obs:</strong> {employee.notes}
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        {/* Tabs por Turno */}
+        <Card className="shadow-lg">
+          <CardContent className="pt-6">
+            <Tabs defaultValue="all" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-3 h-12">
+                <TabsTrigger value="all" className="text-base">
+                  <Users className="w-4 h-4 mr-2" />
+                  Todos ({filteredEmployees.length})
+                </TabsTrigger>
+                <TabsTrigger value="dia" className="text-base">
+                  <Sun className="w-4 h-4 mr-2" />
+                  Turno DIA ({diaEmployees.length})
+                </TabsTrigger>
+                <TabsTrigger value="noite" className="text-base">
+                  <Moon className="w-4 h-4 mr-2" />
+                  Turno NOITE ({noiteEmployees.length})
+                </TabsTrigger>
+              </TabsList>
 
-        {filteredEmployees.length === 0 && (
-          <Card className="mt-8">
-            <CardContent className="py-12 text-center">
-              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Nenhum funcionário encontrado</p>
-            </CardContent>
-          </Card>
-        )}
+              <TabsContent value="all" className="space-y-4">
+                <EmployeeTable employees={filteredEmployees} title="Todos os Colaboradores" icon={Users} />
+              </TabsContent>
+
+              <TabsContent value="dia" className="space-y-4">
+                <EmployeeTable employees={diaEmployees} title="Colaboradores - Turno DIA" icon={Sun} />
+              </TabsContent>
+
+              <TabsContent value="noite" className="space-y-4">
+                <EmployeeTable employees={noiteEmployees} title="Colaboradores - Turno NOITE" icon={Moon} />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-sm text-gray-500">
-          <p>Última atualização: {new Date().toLocaleString('pt-BR')}</p>
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center bg-white px-6 py-3 rounded-full shadow-md">
+            <TrendingUp className="w-4 h-4 mr-2 text-blue-600" />
+            <p className="text-sm text-gray-600">
+              Última atualização: {new Date().toLocaleString('pt-BR')}
+            </p>
+          </div>
         </div>
       </div>
     </div>
