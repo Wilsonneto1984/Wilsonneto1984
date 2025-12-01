@@ -312,6 +312,14 @@ function PublicView() {
             </div>
             <div className="flex items-center space-x-2">
               <Button 
+                onClick={() => window.open(`${API}/public/export/excel?company_code=${companyCode}&date=${selectedDate}`, '_blank')} 
+                variant="outline"
+                size="lg"
+              >
+                <Upload className="w-4 h-4 mr-2 rotate-180" />
+                Excel
+              </Button>
+              <Button 
                 onClick={handleChangeCompany} 
                 variant="outline"
                 size="lg"
