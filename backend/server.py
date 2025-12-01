@@ -134,8 +134,19 @@ async def login(credentials: UserLogin):
     
     # Check company access if not super admin
     if user['role'] != 'super_admin':
+        # Validar código da empresa
+        if not credentials.company_code:
+            raise HTTPException(status_code=400, detail="Company code is required")
+        
         company = await db.companies.find_one({"id": user['company_id']}, {"_id": 0})
-        if not company or not company.get('active', True):
+        if not company:
+            raise HTTPException(status_code=404, detail="Company not found")
+        
+        # Verificar se código da empresa está correto
+        if company.get('company_code') != credentials.company_code:
+            raise HTTPException(status_code=401, detail="Invalid company code")
+        
+        if not company.get('active', True):
             raise HTTPException(status_code=403, detail="Company account is inactive")
         
         # Check subscription expiry
