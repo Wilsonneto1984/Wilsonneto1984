@@ -3,7 +3,7 @@ import axios from "axios";
 import { API } from "@/App";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Users, Calendar, Clock, LogOut, BarChart3, Building2 } from "lucide-react";
+import { Users, Calendar, Clock, LogOut, BarChart3, Building2, Settings } from "lucide-react";
 import { toast } from "sonner";
 import EmployeesTab from "@/components/dashboard/EmployeesTab";
 import AttendanceTab from "@/components/dashboard/AttendanceTab";
@@ -105,17 +105,25 @@ function Dashboard({ user, onLogout }) {
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue={isSuperAdmin ? "companies" : "attendance"} className="space-y-6">
           {isSuperAdmin ? (
-            // Super Admin - Apenas gestão de empresas
+            // Super Admin - Gestão de empresas e configurações
             <>
-              <TabsList className="grid w-full grid-cols-1">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="companies" data-testid="tab-companies">
                   <Building2 className="w-4 h-4 mr-2" />
                   Gerenciar Empresas
+                </TabsTrigger>
+                <TabsTrigger value="settings" data-testid="tab-settings">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configurações
                 </TabsTrigger>
               </TabsList>
               
               <TabsContent value="companies">
                 <CompaniesTab companies={companies} onRefresh={fetchData} />
+              </TabsContent>
+              
+              <TabsContent value="settings">
+                <SettingsTab />
               </TabsContent>
             </>
           ) : (
