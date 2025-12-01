@@ -93,7 +93,7 @@ function Login({ onLogin }) {
 
             <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-sm font-medium text-blue-900 mb-2">Credenciais de Teste:</p>
-              <p className="text-sm text-blue-700">Email: <strong>admin@admin.com</strong></p>
+              <p className="text-sm text-blue-700">Super Admin: <strong>admin@system.com</strong></p>
               <p className="text-sm text-blue-700">Senha: <strong>admin123</strong></p>
             </div>
           </CardContent>
