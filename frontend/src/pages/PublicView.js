@@ -337,6 +337,117 @@ function PublicView() {
           </CardContent>
         </Card>
 
+        {/* Recordistas */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Recordistas - Faltas */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-lg">
+                <div className="bg-red-100 p-2 rounded-lg mr-3">
+                  <TrendingUp className="w-5 h-5 text-red-600" />
+                </div>
+                Recordistas - Faltas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recordistasFaltas.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">Sem dados</p>
+              ) : (
+                <div className="space-y-2">
+                  {recordistasFaltas.map((item, index) => (
+                    <div key={item.chapa} className="flex items-center justify-between py-2 border-b last:border-0">
+                      <div className="flex items-center space-x-3">
+                        <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0">
+                          {index + 1}
+                        </Badge>
+                        <div>
+                          <p className="font-medium text-sm">{item.nome}</p>
+                          <p className="text-xs text-gray-500">Chapa: {item.chapa}</p>
+                        </div>
+                      </div>
+                      <Badge className="bg-red-500 text-white">
+                        {item.count}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recordistas - Atestados */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-lg">
+                <div className="bg-yellow-100 p-2 rounded-lg mr-3">
+                  <TrendingUp className="w-5 h-5 text-yellow-600" />
+                </div>
+                Recordistas - Atestados
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recordistasAtestados.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">Sem dados</p>
+              ) : (
+                <div className="space-y-2">
+                  {recordistasAtestados.map((item, index) => (
+                    <div key={item.chapa} className="flex items-center justify-between py-2 border-b last:border-0">
+                      <div className="flex items-center space-x-3">
+                        <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0">
+                          {index + 1}
+                        </Badge>
+                        <div>
+                          <p className="font-medium text-sm">{item.nome}</p>
+                          <p className="text-xs text-gray-500">Chapa: {item.chapa}</p>
+                        </div>
+                      </div>
+                      <Badge className="bg-yellow-500 text-white">
+                        {item.count}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recordistas - Folgas */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-lg">
+                <div className="bg-purple-100 p-2 rounded-lg mr-3">
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
+                </div>
+                Recordistas - Folgas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recordistasFolgas.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">Sem dados</p>
+              ) : (
+                <div className="space-y-2">
+                  {recordistasFolgas.map((item, index) => (
+                    <div key={item.chapa} className="flex items-center justify-between py-2 border-b last:border-0">
+                      <div className="flex items-center space-x-3">
+                        <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0">
+                          {index + 1}
+                        </Badge>
+                        <div>
+                          <p className="font-medium text-sm">{item.nome}</p>
+                          <p className="text-xs text-gray-500">Chapa: {item.chapa}</p>
+                        </div>
+                      </div>
+                      <Badge className="bg-purple-500 text-white">
+                        {item.count}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
