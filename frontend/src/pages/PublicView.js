@@ -28,6 +28,7 @@ function PublicView() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [companyCode, setCompanyCode] = useState(localStorage.getItem('public_company_code') || '');
   const [showCodeInput, setShowCodeInput] = useState(!localStorage.getItem('public_company_code'));
+  const [activePublicTab, setActivePublicTab] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
