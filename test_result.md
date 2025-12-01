@@ -313,15 +313,18 @@ frontend:
 
   - task: "Multi-company Data Isolation"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Backend public endpoints (lines 1016-1068) verify company_code and filter data by company_id to ensure proper isolation between companies."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: Data isolation verified between companies. REVAP2024 shows 8 employees with specific data (Pedro Almeida, João Silva, etc.), while PETRO2024 shows completely different data (1 employee: Carlos Petrobras). Statistics are isolated: REVAP (8 total, 3 present) vs PETRO (1 total, 0 present). Perfect isolation confirmed."
   - agent: "testing"
     message: "STARTING PUBLIC ACCESS TESTING - Testing direct link access without authentication for /public/{company_code} routes. Will test: 1) REVAP2024 public access, 2) Invalid company codes, 3) Company Admin button functionality, 4) Root redirect, 5) Multi-company isolation (PETRO2024). All tests will be performed without login to verify public access works correctly."
 metadata:
