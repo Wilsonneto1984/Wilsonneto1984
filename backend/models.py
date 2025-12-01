@@ -101,7 +101,7 @@ class Employee(BaseModel):
     funcao: str
     turno: Literal["DIA", "NOITE"]
     grupo: str
-    mo: Literal["M.O.D", "M.O.I"]
+    mo: Optional[str] = None  # M.O.D ou M.O.I ou vazio (pode editar depois)
     admissao: Optional[str] = None
     sindicato: Optional[str] = None
     primeiro_acesso: Optional[str] = None
