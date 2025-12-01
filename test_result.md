@@ -313,6 +313,8 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "Backend public endpoints (lines 1016-1068) verify company_code and filter data by company_id to ensure proper isolation between companies."
+  - agent: "testing"
+    message: "STARTING PUBLIC ACCESS TESTING - Testing direct link access without authentication for /public/{company_code} routes. Will test: 1) REVAP2024 public access, 2) Invalid company codes, 3) Company Admin button functionality, 4) Root redirect, 5) Multi-company isolation (PETRO2024). All tests will be performed without login to verify public access works correctly."
 metadata:
   created_by: "main_agent"
   version: "1.0"
