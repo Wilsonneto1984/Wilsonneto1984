@@ -256,15 +256,18 @@ frontend:
 
   - task: "Public Access via Direct Link (no password)"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/PublicView.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented public access route /public/:company_code that bypasses authentication. PublicView component gets company_code from URL params and calls public API endpoints. Route configured in App.js lines 78-82."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: /public/REVAP2024 loads without authentication. Shows complete employee dashboard with statistics (8 total, 3 present, 2 absent, 1 folga, 2 atestados), employee tables by shift (DIA/NOITE), recordistas sections, and all functionality working. No login required."
 
   - task: "Invalid Company Code Handling"
     implemented: true
