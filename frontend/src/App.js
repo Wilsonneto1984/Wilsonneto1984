@@ -42,6 +42,11 @@ function App() {
       const response = await axios.get(`${API}/auth/me`);
       setUser(response.data);
       setIsAuthenticated(true);
+      
+      // Verificar expiração da assinatura (apenas para empresas)
+      if (response.data.role !== 'super_admin' && response.data.company) {
+        checkSubscriptionExpiration(response.data.company);
+      }
     } catch (error) {
       console.error('Auth check failed:', error);
       localStorage.removeItem('token');
