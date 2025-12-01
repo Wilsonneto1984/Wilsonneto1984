@@ -75,8 +75,15 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          {/* Visualização Pública - APENAS para empresas, NÃO para Super Admin */}
-          <Route path="/" element={<PublicView />} />
+          {/* Visualização Pública - APENAS para visualização de efetivo, NÃO para Super Admin */}
+          <Route 
+            path="/" 
+            element={
+              isAuthenticated && user?.role === 'super_admin' ? 
+              <Navigate to="/dashboard" replace /> : 
+              <PublicView />
+            } 
+          />
           
           <Route 
             path="/login" 
