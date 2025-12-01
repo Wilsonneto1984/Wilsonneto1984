@@ -304,10 +304,30 @@ function CompaniesTab({ companies, onRefresh }) {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <span className={expired ? 'text-red-600 font-medium' : ''}>
-                          {formatDate(company.subscription_expires_at)}
-                          {expired && ' (Expirado)'}
-                        </span>
+                        {(() => {
+                          const daysLeft = getDaysUntilExpiry(company.subscription_expires_at);
+                          let color = '';
+                          let badge = null;
+                          
+                          if (expired) {
+                            color = 'text-red-600 font-medium';
+                            badge = <Badge variant="destructive" className="ml-2 text-xs">Expirado</Badge>;
+                          } else if (daysLeft !== null && daysLeft <= 7) {
+                            color = 'text-orange-600 font-medium';
+                            badge = <Badge variant="outline" className="ml-2 text-xs border-orange-500 text-orange-600">{daysLeft} dias</Badge>;
+                          } else if (daysLeft !== null && daysLeft <= 30) {
+                            badge = <Badge variant="outline" className="ml-2 text-xs">{daysLeft} dias</Badge>;
+                          }
+                          
+                          return (
+                            <div className="flex items-center">
+                              <span className={color}>
+                                {formatDate(company.subscription_expires_at)}
+                              </span>
+                              {badge}
+                            </div>
+                          );
+                        })()}
                       </TableCell>
                       <TableCell>
                         <Badge 
