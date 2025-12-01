@@ -230,11 +230,29 @@ frontend:
     file: "/app/frontend/src/components/dashboard/EmployeesTab.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Implemented employee management UI with all fields (chapa, nome, funcao, turno, grupo, mo, admissao, sindicato). Includes CSV import interface, tabs for DIA/NOITE/Desmobilizados, search functionality, and proper role-based permissions (viewers can reactivate employees)."
+      - working: true
+        agent: "testing"
+        comment: "Employee management UI tested and working correctly."
+
+  - task: "Super Admin Access Restriction - Remove Public View Access"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Bug fix implemented: Removed 'Visualizar Pública' button from Super Admin dashboard (lines 86-90 in Dashboard.js). App.js routing already correctly redirects Super Admin from '/' to '/dashboard' (lines 82-84)."
+      - working: true
+        agent: "testing"
+        comment: "COMPREHENSIVE TESTING COMPLETED ✅ All 3 test scenarios passed: 1) Super Admin dashboard shows NO 'Visualizar Pública' button - only 'Sair' button visible ✅ 2) Super Admin accessing '/' directly gets redirected to '/dashboard' automatically ✅ 3) Company Admin dashboard shows 'Visualizar Pública' button correctly ✅ Bug fix verified working perfectly. Screenshots captured for all scenarios."
 
 metadata:
   created_by: "main_agent"
