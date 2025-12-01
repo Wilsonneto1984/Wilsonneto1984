@@ -214,11 +214,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Create, read, update attendance records. Supports manual editing of status (FALTA → FO or ATE). Filtering by date range and employee."
+      - working: true
+        agent: "testing"
+        comment: "Attendance management tested successfully. Can create attendance records, update status (FALTA to FO), list by date and employee. All CRUD operations working correctly."
 
 frontend:
   - task: "Frontend implementation"
