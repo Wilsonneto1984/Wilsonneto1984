@@ -547,13 +547,13 @@ function PublicView() {
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
             <Input
               type="text"
               placeholder="Buscar por nome, chapa ou função..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 text-lg shadow-md"
+              className="pl-12 h-12 text-lg shadow-md dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </div>
