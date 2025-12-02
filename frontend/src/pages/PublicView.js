@@ -325,15 +325,15 @@ function PublicView() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Date Selector */}
-        <Card className="mb-8 shadow-lg">
+        <Card className="mb-8 shadow-lg dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <CardTitle className="flex items-center text-2xl">
-                  <Calendar className="w-6 h-6 mr-3 text-blue-600" />
+                <CardTitle className="flex items-center text-2xl text-gray-900 dark:text-white">
+                  <Calendar className="w-6 h-6 mr-3 text-blue-600 dark:text-blue-400" />
                   Resumo do Efetivo
                 </CardTitle>
-                <CardDescription className="text-base mt-2">
+                <CardDescription className="text-base mt-2 text-gray-600 dark:text-gray-400">
                   Data: {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -347,9 +347,9 @@ function PublicView() {
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-auto"
+                  className="w-auto dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
-                <Button onClick={fetchData} variant="outline" size="icon">
+                <Button onClick={fetchData} variant="outline" size="icon" className="dark:border-gray-600 dark:hover:bg-gray-700">
                   <RefreshCw className="w-4 h-4" />
                 </Button>
               </div>
