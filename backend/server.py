@@ -1244,7 +1244,8 @@ async def export_employees_excel(
         if turno:
             query["turno"] = turno
         
-        employees = await db.employees.find(query, {"_id": 0}).to_list(10000)
+        # Para exportação, usar limit razoável de 5000 registros
+        employees = await db.employees.find(query, {"_id": 0}).limit(5000).to_list(None)
         
         # Criar workbook
         wb = openpyxl.Workbook()
