@@ -1365,7 +1365,8 @@ async def get_public_attendance(
     elif start_date and end_date:
         query["date"] = {"$gte": start_date, "$lte": end_date}
     
-    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
+    # Limite razoável para registros de presença (período de 30 dias)
+    records = await db.attendance.find(query, {"_id": 0}).limit(3000).to_list(None)
     for record in records:
         if isinstance(record.get('registered_at'), str):
             record['registered_at'] = datetime.fromisoformat(record['registered_at'])
