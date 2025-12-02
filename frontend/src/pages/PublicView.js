@@ -166,26 +166,26 @@ function PublicView() {
   const EmployeeTable = ({ employees, title, icon: Icon }) => (
     <div>
       <div className="flex items-center mb-4">
-        <Icon className="w-5 h-5 mr-2 text-blue-600" />
-        <h3 className="text-lg font-semibold">{title}</h3>
+        <Icon className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
         <Badge variant="outline" className="ml-2">{employees.length}</Badge>
       </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Chapa</TableHead>
-            <TableHead>Nome</TableHead>
-            <TableHead>Função</TableHead>
-            <TableHead>Grupo</TableHead>
-            <TableHead>M.O</TableHead>
-            <TableHead>Hora</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">Chapa</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">Nome</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">Função</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">Grupo</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">M.O</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">Hora</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {employees.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center text-gray-500 py-8">
+              <TableCell colSpan={7} className="text-center text-gray-500 dark:text-gray-400 py-8">
                 Nenhum colaborador encontrado
               </TableCell>
             </TableRow>
@@ -193,17 +193,17 @@ function PublicView() {
             employees.map((employee) => {
               const status = statusConfig[employee.attendance_status] || statusConfig.not_registered;
               return (
-                <TableRow key={employee.id}>
-                  <TableCell className="font-medium">{employee.chapa}</TableCell>
-                  <TableCell>{employee.nome}</TableCell>
-                  <TableCell className="text-sm">{employee.funcao}</TableCell>
-                  <TableCell>{employee.grupo}</TableCell>
+                <TableRow key={employee.id} className="dark:border-gray-700">
+                  <TableCell className="font-medium text-gray-900 dark:text-gray-100">{employee.chapa}</TableCell>
+                  <TableCell className="text-gray-900 dark:text-gray-100">{employee.nome}</TableCell>
+                  <TableCell className="text-sm text-gray-700 dark:text-gray-300">{employee.funcao}</TableCell>
+                  <TableCell className="text-gray-900 dark:text-gray-100">{employee.grupo}</TableCell>
                   <TableCell>
                     <Badge variant={employee.mo === 'M.O.D' ? 'default' : 'outline'} className="text-xs">
                       {employee.mo}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-sm">{employee.hora_batida || '-'}</TableCell>
+                  <TableCell className="text-sm text-gray-700 dark:text-gray-300">{employee.hora_batida || '-'}</TableCell>
                   <TableCell>
                     <Badge className={`${status.color} text-white text-xs`}>
                       {status.label}
