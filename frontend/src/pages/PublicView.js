@@ -559,10 +559,10 @@ function PublicView() {
         </div>
 
         {/* Tabs por Turno */}
-        <Card className="shadow-lg">
+        <Card className="shadow-lg dark:bg-gray-800 dark:border-gray-700">
           <CardContent className="pt-6">
             <Tabs value={activePublicTab} onValueChange={setActivePublicTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3 h-12">
+              <TabsList className="grid w-full grid-cols-3 h-12 dark:bg-gray-700">
                 <TabsTrigger value="all" className="text-base">
                   <Users className="w-4 h-4 mr-2" />
                   Todos ({filteredEmployees.length})
@@ -594,9 +594,9 @@ function PublicView() {
 
         {/* Footer */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center bg-white px-6 py-3 rounded-full shadow-md">
-            <TrendingUp className="w-4 h-4 mr-2 text-blue-600" />
-            <p className="text-sm text-gray-600">
+          <div className="inline-flex items-center bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-md dark:border dark:border-gray-700">
+            <TrendingUp className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Última atualização: {new Date().toLocaleString('pt-BR')}
             </p>
           </div>
