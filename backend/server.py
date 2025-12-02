@@ -1329,11 +1329,11 @@ async def get_public_employees(company_code: str):
     if not company.get('active', True):
         raise HTTPException(status_code=403, detail="Company account is inactive")
     
-    # Buscar colaboradores ativos da empresa
+    # Buscar colaboradores ativos da empresa (limite razoável para visualização pública)
     employees = await db.employees.find({
         "company_id": company['id'],
         "active": True
-    }, {"_id": 0}).to_list(10000)
+    }, {"_id": 0}).limit(2000).to_list(None)
     
     for emp in employees:
         if isinstance(emp.get('created_at'), str):
