@@ -1148,9 +1148,11 @@ async def get_attendance(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     employee_chapa: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 1000,
     current_user: dict = Depends(get_current_user)
 ):
-    """Get attendance records"""
+    """Get attendance records with pagination"""
     company_id = current_user['company_id'] if current_user['role'] != 'super_admin' else None
     if not company_id:
         raise HTTPException(status_code=400, detail="Company ID required")
@@ -1165,7 +1167,7 @@ async def get_attendance(
     if employee_chapa:
         query["employee_chapa"] = employee_chapa
     
-    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
+    records = await db.attendance.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(None)
     for record in records:
         if isinstance(record.get('registered_at'), str):
             record['registered_at'] = datetime.fromisoformat(record['registered_at'])
