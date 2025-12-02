@@ -385,23 +385,23 @@ function PublicView() {
             </div>
 
             {/* Stats por Turno e M.O */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t dark:border-gray-700">
               {/* DIA */}
               <div className="space-y-3">
                 <div className="flex items-center">
                   <Sun className="w-5 h-5 text-orange-500 mr-2" />
-                  <h4 className="font-bold text-lg">Turno DIA</h4>
+                  <h4 className="font-bold text-lg text-gray-900 dark:text-white">Turno DIA</h4>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <p className="text-xs text-blue-600 font-medium">M.O.D</p>
-                    <p className="text-lg font-bold text-blue-900">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">M.O.D</p>
+                    <p className="text-lg font-bold text-blue-900 dark:text-blue-100">
                       {modStats.dia.mod.presente}/{modStats.dia.mod.total}
                     </p>
                   </div>
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <p className="text-xs text-blue-600 font-medium">M.O.I</p>
-                    <p className="text-lg font-bold text-blue-900">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">M.O.I</p>
+                    <p className="text-lg font-bold text-blue-900 dark:text-blue-100">
                       {modStats.dia.moi.presente}/{modStats.dia.moi.total}
                     </p>
                   </div>
@@ -412,18 +412,18 @@ function PublicView() {
               <div className="space-y-3">
                 <div className="flex items-center">
                   <Moon className="w-5 h-5 text-indigo-500 mr-2" />
-                  <h4 className="font-bold text-lg">Turno NOITE</h4>
+                  <h4 className="font-bold text-lg text-gray-900 dark:text-white">Turno NOITE</h4>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
-                    <p className="text-xs text-indigo-600 font-medium">M.O.D</p>
-                    <p className="text-lg font-bold text-indigo-900">
+                  <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                    <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">M.O.D</p>
+                    <p className="text-lg font-bold text-indigo-900 dark:text-indigo-100">
                       {modStats.noite.mod.presente}/{modStats.noite.mod.total}
                     </p>
                   </div>
-                  <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
-                    <p className="text-xs text-indigo-600 font-medium">M.O.I</p>
-                    <p className="text-lg font-bold text-indigo-900">
+                  <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                    <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">M.O.I</p>
+                    <p className="text-lg font-bold text-indigo-900 dark:text-indigo-100">
                       {modStats.noite.moi.presente}/{modStats.noite.moi.total}
                     </p>
                   </div>
