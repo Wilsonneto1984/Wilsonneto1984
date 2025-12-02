@@ -1387,9 +1387,9 @@ async def export_public_excel(company_code: str, date: str, turno: Optional[str]
         if not company:
             raise HTTPException(status_code=404, detail="Invalid company code")
         
-        # Buscar colaboradores e presença
-        employees = await db.employees.find({"company_id": company['id'], "active": True}, {"_id": 0}).to_list(10000)
-        attendance = await db.attendance.find({"company_id": company['id'], "date": date}, {"_id": 0}).to_list(10000)
+        # Buscar colaboradores e presença (limites razoáveis para exportação)
+        employees = await db.employees.find({"company_id": company['id'], "active": True}, {"_id": 0}).limit(2000).to_list(None)
+        attendance = await db.attendance.find({"company_id": company['id'], "date": date}, {"_id": 0}).limit(3000).to_list(None)
         
         # Criar workbook com múltiplas abas
         wb = openpyxl.Workbook()
