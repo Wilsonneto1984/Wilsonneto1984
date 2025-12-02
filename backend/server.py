@@ -533,9 +533,11 @@ async def get_employees(
     active_only: bool = True,
     turno: Optional[str] = None,
     mo: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 1000,
     current_user: dict = Depends(get_current_user)
 ):
-    """Get employees"""
+    """Get employees with pagination"""
     company_id = current_user['company_id'] if current_user['role'] != 'super_admin' else None
     if not company_id:
         raise HTTPException(status_code=400, detail="Company ID required")
@@ -548,7 +550,7 @@ async def get_employees(
     if mo:
         query["mo"] = mo
     
-    employees = await db.employees.find(query, {"_id": 0}).to_list(10000)
+    employees = await db.employees.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(None)
     for emp in employees:
         if isinstance(emp.get('created_at'), str):
             emp['created_at'] = datetime.fromisoformat(emp['created_at'])
