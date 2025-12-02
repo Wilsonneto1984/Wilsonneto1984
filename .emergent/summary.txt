@@ -1,0 +1,158 @@
+<analysis>**original_problem_statement:**
+O usuário solicitou a criação de um sistema de gerenciamento de efetivo multi-empresa com as seguintes funcionalidades:
+- **PRODUCT REQUIREMENTS**
+- **Importação de CSV**: Para presença e para cadastro de funcionários.
+- **Hierarquia de Acesso**: Super Admin, Admin de Empresa, Visualizador.
+- **Painel de Visualização Público**: Acessível via link direto () sem login.
+- **Exportação**: Relação Nominal e um Resumo de Efetivo Diário complexo (layout a ser replicado de uma imagem).
+- **Sistema Multi-Empresa e Cobrança**:
+    - Auto-cadastro de empresas com trial de 30 dias.
+    - Bloqueio de acesso após o trial, com redirecionamento para pagamento.
+    - Integração com Mercado Pago para licenças.
+    - Super Admin para gerenciar empresas, sem acesso a dados de funcionários.
+- **Personalização e UI**:
+    - Upload de logo da empresa.
+    - Dark/Light Mode em todo o projeto.
+    - Página de seleção de acesso (Empresa vs. Gestor).
+- **Gestão de Subcontratadas**: Tela para cadastro de subcontratadas.
+
+**User's preferred language**: Portuguese
+
+**what currently exists?**
+A aplicação é um sistema full-stack (FastAPI + React + MongoDB) multi-tenant com autenticação baseada em roles, auto-cadastro de empresas com trial de 30 dias e dashboards para Super Admin e Admin de Empresa. A funcionalidade de Dark/Light mode foi implementada e agora está disponível tanto no dashboard principal quanto na página de visualização pública. A gestão de subcontratadas e importação de CSV para funcionários estão funcionais.
+
+**Last working item**:
+-   **Last item agent was working**: O agente estava investigando bloqueadores de deployment identificados pelo . Os bloqueadores eram Arquivos .env Ausentes e Consultas ao Banco de Dados Não Otimizadas. O agente verificou que os arquivos  existem e que os serviços estão rodando, mas confirmou a presença de erros de validação no backend e não abordou o problema das consultas não otimizadas.
+-   **Status**: BLOCKED
+-   **Agent Testing Done**: Y (O agente verificou a existência dos arquivos  e o status dos serviços, mas não resolveu os problemas reportados.)
+-   **Which testing method agent to use?**: O agente precisa investigar os endpoints listados pelo  que possuem consultas não otimizadas e refatorá-los para usar paginação. Após a correção, o  deve ser chamado novamente.
+-   **User Testing Done**: N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1: Deployment bloqueado por consultas de banco de dados não otimizadas (P0)**
+    -   **Description**: O  reportou que 8 endpoints no  usam  sem paginação, o que representa um risco de performance e impede o deployment.
+    -   **Next debug checklist**:
+        1.  Identificar os 8 endpoints mencionados pelo  no arquivo .
+        2.  Refatorar cada consulta para implementar paginação (usando  e ) em vez de buscar uma lista grande de uma só vez.
+        3.  Testar os endpoints refatorados para garantir que a funcionalidade não foi quebrada.
+        4.  Chamar o  novamente para confirmar que o bloqueador foi resolvido.
+    -   **Why fix this issue and what will be achieved with the fix?**: Resolver este problema é crítico para desbloquear o deployment da aplicação e garantir a escalabilidade e performance do banco de dados.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: backend
+    -   **Blocked on other issue**: None
+
+-   **Issue 2: Correção do Ícone Dark/Light Mode aguardando validação do usuário (P0)**
+    -   **Description**: O agente corrigiu a visibilidade do ícone de Dark/Light Mode no dashboard do admin e também o adicionou à página de visualização pública, conforme solicitado pelo usuário. O trabalho está concluído, mas o usuário ainda não confirmou se o problema foi resolvido do lado dele.
+    -   **Status**: USER VERIFICATION PENDING
+    -   **Is recurring issue?**: Y (O usuário reportou o mesmo problema duas vezes, primeiro no dashboard, depois na página pública.)
+    -   **Should Test frontend/backend/both after fix?**: frontend
+    -   **Blocked on other issue**: None
+
+**In progress Task List**:
+N/A
+
+**Upcoming and Future Tasks**
+-   **Task 1: Implementar Exportação de Efetivo Diário (P1)**: Criar a funcionalidade de exportação para Excel que gera um relatório consolidado por função, seguindo o layout complexo fornecido pelo usuário. A lógica precisa ser implementada em  e um novo endpoint precisa ser criado.
+-   **Task 2: Finalizar Integração com Mercado Pago (P2)**: Implementar o fluxo de pagamento para renovação de licenças, incluindo a criação da preferência de pagamento, processamento via cartão e atualização da data de validade da empresa via webhook.
+-   **Task 3: Implementar Upload de Logo da Empresa (P2)**: Permitir que administradores de empresa façam upload do logo, que deve ser exibido no painel e na página pública.
+-   **Task 4: Implementar Lógica de Processamento de Folgas (P3)**: Implementar a regra de negócio para processamento de folgas (as folgas devem ser processadas a cada 7 dias com P ou PN, quando houver FO deve-se abater no número de folgas).
+-   **Task 5: Adicionar Status Online das Empresas (P3)**: No dashboard do Super Admin, adicionar um indicador para mostrar quais empresas estão atualmente logadas.
+-   **Task 6: Refatorar o Backend (P3)**: Dividir o arquivo monolítico  em múltiplos arquivos de rotas (, , etc.).
+
+**Completed work in this session**
+- **Ícone Dark/Light Mode Corrigido e Aprimorado**:
+  - O ícone, que estava invisível no modo claro, foi corrigido no dashboard principal.
+  - O ícone foi redesenhado para melhor visibilidade (fundo, borda, cores e tamanho).
+  - A funcionalidade de toggle de tema foi adicionada também à página de Visualização Pública, atendendo a um novo pedido do usuário.
+
+**Earlier issues found/mentioned but not fixed**
+-   **Issue 1: Integração do Mercado Pago está incompleta**. A estrutura foi criada, mas o fluxo de pagamento não foi implementado.
+-   **Issue 2: Funcionalidade de upload de logo não existe**.
+-   **Issue 3: Exportação complexa de efetivo diário não implementada**.
+
+**Known issue recurrence from previous fork**
+-   **Issue recurrence in previous fork**: O Super Admin conseguia acessar a página de visualização pública.
+-   **Recurrence count**: 3
+-   **Status**: RESOLVED (Corrigido em um fork anterior).
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+- **Backend**: FastAPI
+- **Frontend**: React.js com Vite
+- **Database**: MongoDB com Beanie ODM
+- **Authentication**: JWT com role-based access control
+- **Styling**: Tailwind CSS, shadcn/ui
+- **State Management**: React Context API
+- **Architecture**: Multi-tenant
+
+**key DB schema**
+-   : {, , , , , }
+-   : {, , , , }
+-   : {, , , , , , : Optional[str] }
+-   : {, , Tue Dec  2 00:14:47 UTC 2025, }
+-   : {, , , }
+-   : {, , , , }
+
+**changes in tech stack**
+N/A
+
+**All files of reference**
+-   **Modificados nesta sessão**:
+    -   : Adicionado suporte a dark mode no header.
+    -   : Melhorada a visibilidade e estilo do ícone.
+    -   : Adicionado o componente  e o  para habilitar o dark mode na página pública.
+-   **Outros arquivos importantes**:
+    -   : Contém as consultas de banco de dados que precisam de otimização.
+
+**Areas that need refactoring**:
+-   O arquivo  é monolítico. A necessidade de refatoração é reforçada pelo bloqueio de deployment devido a consultas não otimizadas, tornando a tarefa **Refatorar o Backend** mais prioritária.
+
+**key api endpoints**
+-   
+-   
+-   
+-   
+
+**Critical Info for New Agent**
+-   **Deployment Bloqueado**: Sua primeira prioridade é resolver o bloqueio de deployment. O  reclamou de consultas não otimizadas (uso excessivo de ). Você precisa refatorar esses endpoints em  para usar paginação.
+-   **Validação do Usuário Pendente**: O trabalho no ícone de Dark/Light mode está tecnicamente concluído, mas aguarda a confirmação do usuário. Esteja preparado para um feedback adicional dele.
+-   **Erros de Validação no Backend**: O agente anterior notou erros de  nos logs do backend. Embora ele não tenha investigado, pode ser um problema subjacente que precise de atenção após o desbloqueio do deployment.
+
+**documents created in this job**
+Nenhum documento novo foi criado nesta sessão.
+
+**Last 10 User Messages and any pending user messages**
+1.  : Completed.
+2.  : Completed.
+3.  : Completed.
+4.  : In Progress.
+5.  : Completed.
+6.  : In Progress.
+7.  : Completed.
+8.  : Completed.
+9.  : User reports icon is missing on public view page. **Status: Completed**.
+10. : System/user triggers deployment check, which fails. **Status: BLOCKED**.
+
+**Project Health Check:**
+-   **Working**: Funcionalidades principais da aplicação, incluindo dashboards, autenticação, e o recém-corrigido toggle de tema.
+-   **Broken**: O deployment está bloqueado devido a consultas de banco de dados não otimizadas. Existem também erros de validação de resposta no backend () que aparecem nos logs e precisam ser investigados.
+-   **Mocked**: A integração com o Mercado Pago permanece apenas como uma estrutura de UI, sem lógica de pagamento real.
+
+**3rd Party Integrations**:
+-   **Mercado Pago**: Planejado para processamento de pagamentos. A implementação do fluxo de pagamento ainda está pendente.
+
+**Testing status**
+-   **Testing agent used after significant changes**: Não nesta sessão, mas o  foi chamado.
+-   **Troubleshoot agent used after agent stuck in loop**: Não.
+-   **Test files created**: Nenhum.
+-   **Known regressions**: N/A.
+
+**Credentials to test flow:**
+-   **Super Admin**:  / 
+-   **Empresa 1 (REVAP)**:  /  (Código: )
+
+**What agent forgot to execute**
+- O agente não abordou o principal bloqueador de deployment reportado pelo  (consultas não otimizadas), focando apenas em refutar o primeiro ponto (arquivos .env ausentes). A resolução do problema de performance das queries é a próxima ação crítica.</analysis>
