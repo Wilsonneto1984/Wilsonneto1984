@@ -472,29 +472,29 @@ function PublicView() {
           </Card>
 
           {/* Recordistas - Atestados */}
-          <Card className="shadow-lg hover:shadow-xl transition-shadow">
+          <Card className="shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center text-lg">
-                <div className="bg-yellow-100 p-2 rounded-lg mr-3">
-                  <TrendingUp className="w-5 h-5 text-yellow-600" />
+              <CardTitle className="flex items-center text-lg text-gray-900 dark:text-white">
+                <div className="bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded-lg mr-3">
+                  <TrendingUp className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 Recordistas - Atestados
               </CardTitle>
             </CardHeader>
             <CardContent>
               {recordistasAtestados.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">Sem dados</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">Sem dados</p>
               ) : (
                 <div className="space-y-2">
                   {recordistasAtestados.map((item, index) => (
-                    <div key={item.chapa} className="flex items-center justify-between py-2 border-b last:border-0">
+                    <div key={item.chapa} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
                       <div className="flex items-center space-x-3">
                         <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0">
                           {index + 1}
                         </Badge>
                         <div>
-                          <p className="font-medium text-sm">{item.nome}</p>
-                          <p className="text-xs text-gray-500">Chapa: {item.chapa}</p>
+                          <p className="font-medium text-sm text-gray-900 dark:text-gray-100">{item.nome}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Chapa: {item.chapa}</p>
                         </div>
                       </div>
                       <Badge className="bg-yellow-500 text-white">
